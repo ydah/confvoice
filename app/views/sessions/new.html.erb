@@ -1,0 +1,23 @@
+<div class="mx-auto max-w-md rounded-lg border border-zinc-200 dark:border-zinc-800/80 bg-white dark:bg-zinc-900/70 p-6">
+  <h1 class="text-2xl font-bold text-zinc-950 dark:text-zinc-50">ログイン</h1>
+
+  <%= form_with url: session_path, class: "mt-6 space-y-5" do |form| %>
+    <div>
+      <%= form.label :email_address, "メールアドレス", class: "block text-sm font-medium text-zinc-700 dark:text-zinc-300" %>
+      <%= form.email_field :email_address, required: true, autocomplete: "email", class: "mt-2 w-full rounded-md border border-zinc-300 dark:border-zinc-700 px-3 py-2 focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" %>
+    </div>
+
+    <div>
+      <%= form.label :password, "パスワード", class: "block text-sm font-medium text-zinc-700 dark:text-zinc-300" %>
+      <%= form.password_field :password, required: true, autocomplete: "current-password", class: "mt-2 w-full rounded-md border border-zinc-300 dark:border-zinc-700 px-3 py-2 focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" %>
+    </div>
+
+    <%= form.submit "ログイン", class: "w-full rounded-md bg-zinc-100 px-4 py-3 text-sm font-semibold text-zinc-950 hover:bg-white" %>
+  <% end %>
+
+  <% if self_registration_enabled? %>
+    <p class="mt-5 text-sm text-zinc-600 dark:text-zinc-400">
+      アカウントがない場合は <%= link_to "主催者登録", new_registration_path, class: "font-medium text-emerald-600 dark:text-emerald-300 hover:text-emerald-700 dark:hover:text-emerald-200" %>
+    </p>
+  <% end %>
+</div>

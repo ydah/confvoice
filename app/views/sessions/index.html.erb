@@ -1,0 +1,25 @@
+<div class="space-y-6">
+  <div>
+    <p class="text-sm text-zinc-600 dark:text-zinc-400"><%= link_to @conference.name, conference_path(@conference), class: "hover:text-emerald-600 dark:hover:text-emerald-300" %></p>
+    <h1 class="mt-1 text-2xl font-bold text-zinc-950 dark:text-zinc-50">セッション一覧</h1>
+  </div>
+
+  <% if @sessions.any? %>
+    <div class="grid gap-4 md:grid-cols-2">
+      <% @sessions.each do |session| %>
+        <article class="rounded-lg border border-zinc-200 dark:border-zinc-800/80 bg-white dark:bg-zinc-900/70 p-5">
+          <h2 class="text-lg font-semibold"><%= link_to session.title, conference_session_path(@conference, session), class: "hover:text-emerald-600 dark:hover:text-emerald-300" %></h2>
+          <p class="mt-1 text-sm text-zinc-600 dark:text-zinc-400"><%= session.speaker_name %></p>
+          <p class="mt-2 text-sm text-zinc-600 dark:text-zinc-400"><%= short_datetime(session.starts_at) %> - <%= short_datetime(session.ends_at) %> / <%= session.room.presence || "会場未定" %></p>
+          <div class="mt-4">
+            <%= link_to "感想を送る", public_feedback_path(@conference, session), class: "rounded-md bg-emerald-400 px-3 py-2 text-sm font-semibold text-zinc-950 hover:bg-emerald-300" %>
+          </div>
+        </article>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="rounded-lg border border-dashed border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900/70 p-8 text-center text-zinc-600 dark:text-zinc-400">
+      セッションはまだ登録されていません。
+    </div>
+  <% end %>
+</div>

@@ -1,0 +1,11 @@
+<h1>新しい感想が届きました</h1>
+
+<p><strong><%= @conference.name %></strong> の <strong><%= @session.title %></strong> に感想が投稿されました。</p>
+
+<p>名前: <%= @feedback.respondent_name %></p>
+
+<% if @feedback.rating.present? %>
+  <p>評価: <%= @feedback.rating %> / 5</p>
+<% end %>
+
+<p><%= simple_format(@feedback.body) %></p>

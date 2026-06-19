@@ -1,0 +1,99 @@
+en:
+  app:
+    name: "ConfVoice"
+    nav:
+      conferences: "Conferences"
+      users: "Users"
+      login: "Log in"
+      logout: "Log out"
+      register: "Sign up"
+      language: "Language"
+      primary: "Primary navigation"
+    theme:
+      toggle: "Toggle theme"
+      light: "Light"
+      dark: "Dark"
+    flash:
+      login_required: "Please log in"
+      forbidden: "You do not have permission"
+  pages:
+    home:
+      eyebrow: "Conference feedback"
+      headline: "ConfVoice"
+      lead: "Collect session feedback from QR codes and let organizers share only reviewed feedback with speakers."
+      dashboard: "Open dashboard"
+      login: "Log in"
+      register: "Organizer sign up"
+      published: "Published conferences"
+      empty: "There are no published conferences yet."
+  public_feedbacks:
+    back_to_sessions: "Back to talks"
+    respondent_name: "Your name"
+    name_placeholder: "Alex Smith"
+    body: "Feedback"
+    placeholder: "Share what you thought about the session"
+    submit: "Send feedback"
+    thanks_title: "Thank you"
+    thanks_body: "Your feedback has been sent. You can close this page."
+    closed_title: "Closed"
+    closed_body: "Feedback is closed for this session."
+  public_conferences:
+    eyebrow: "Talk list"
+    sessions_title: "Talks"
+    send_feedback: "Write feedback"
+    closed: "Closed"
+    empty: "No talks have been added yet."
+    venue_tbd: "Venue TBD"
+    room_tbd: "Room TBD"
+  speaker_portals:
+    expired_title: "This invitation link has expired"
+    expired_body: "Ask the organizer to issue a new link."
+    latest_feedbacks: "Latest feedback"
+    empty_feedbacks: "No feedback has been shared by the organizer yet."
+    word_cloud: "Word cloud"
+    slide: "Open slide PDF"
+  metrics:
+    feedback_count: "Feedback"
+    average_rating: "Average rating"
+    reactions: "Reactions"
+  date:
+    formats:
+      default: "%Y/%m/%d"
+      short: "%m/%d"
+      long: "%B %d, %Y"
+  time:
+    formats:
+      default: "%Y/%m/%d %H:%M"
+      short: "%m/%d %H:%M"
+      long: "%B %d, %Y %H:%M"
+  errors:
+    messages:
+      blank: "can't be blank"
+      taken: "has already been taken"
+      too_long: "is too long (maximum is %{count} characters)"
+  activerecord:
+    models:
+      conference: "Conference"
+      session: "Session"
+      feedback: "Feedback"
+      user: "User"
+    attributes:
+      conference:
+        name: "Conference name"
+        starts_on: "Start date"
+        ends_on: "End date"
+        slug: "Slug"
+      session:
+        title: "Title"
+        speaker_name: "Speaker"
+        starts_at: "Start time"
+        ends_at: "End time"
+        slug: "Slug"
+      feedback:
+        respondent_name: "Your name"
+        rating: "Rating"
+        body: "Feedback"
+      user:
+        email_address: "Email address"
+        name: "Name"
+        password: "Password"

@@ -1,0 +1,29 @@
+<div class="mx-auto max-w-md rounded-lg border border-zinc-200 dark:border-zinc-800/80 bg-white dark:bg-zinc-900/70 p-6">
+  <h1 class="text-2xl font-bold text-zinc-950 dark:text-zinc-50">主催者登録</h1>
+
+  <%= form_with model: @user, url: registration_path, class: "mt-6 space-y-5" do |form| %>
+    <%= render "shared/errors", resource: @user %>
+
+    <div>
+      <%= form.label :name, "名前", class: "block text-sm font-medium text-zinc-700 dark:text-zinc-300" %>
+      <%= form.text_field :name, required: true, class: "mt-2 w-full rounded-md border border-zinc-300 dark:border-zinc-700 px-3 py-2 focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" %>
+    </div>
+
+    <div>
+      <%= form.label :email_address, "メールアドレス", class: "block text-sm font-medium text-zinc-700 dark:text-zinc-300" %>
+      <%= form.email_field :email_address, required: true, autocomplete: "email", class: "mt-2 w-full rounded-md border border-zinc-300 dark:border-zinc-700 px-3 py-2 focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" %>
+    </div>
+
+    <div>
+      <%= form.label :password, "パスワード", class: "block text-sm font-medium text-zinc-700 dark:text-zinc-300" %>
+      <%= form.password_field :password, required: true, autocomplete: "new-password", class: "mt-2 w-full rounded-md border border-zinc-300 dark:border-zinc-700 px-3 py-2 focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" %>
+    </div>
+
+    <div>
+      <%= form.label :password_confirmation, "パスワード確認", class: "block text-sm font-medium text-zinc-700 dark:text-zinc-300" %>
+      <%= form.password_field :password_confirmation, required: true, autocomplete: "new-password", class: "mt-2 w-full rounded-md border border-zinc-300 dark:border-zinc-700 px-3 py-2 focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" %>
+    </div>
+
+    <%= form.submit "登録する", class: "w-full rounded-md bg-zinc-100 px-4 py-3 text-sm font-semibold text-zinc-950 hover:bg-white" %>
+  <% end %>
+</div>

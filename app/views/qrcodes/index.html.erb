@@ -1,0 +1,37 @@
+<div class="space-y-6">
+  <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div>
+      <p class="text-sm text-zinc-600 dark:text-zinc-400"><%= @conference.name %></p>
+      <h1 class="text-2xl font-bold text-zinc-950 dark:text-zinc-50">QR コード一覧</h1>
+    </div>
+    <button type="button" onclick="window.print()" class="rounded-md border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2 text-sm font-semibold hover:bg-zinc-100 dark:hover:bg-zinc-800">印刷</button>
+  </div>
+
+  <section class="rounded-lg border border-emerald-200 dark:border-emerald-500/40 bg-white dark:bg-zinc-900/70 p-6 break-inside-avoid">
+    <div class="grid gap-5 sm:grid-cols-[auto_1fr] sm:items-center">
+      <div class="mx-auto flex justify-center rounded-md bg-white p-3 sm:mx-0">
+        <%= qrcode_svg(public_conference_url(@conference)) %>
+      </div>
+      <div>
+        <p class="text-sm font-semibold uppercase tracking-wide text-emerald-600 dark:text-emerald-300">Conference URL</p>
+        <h2 class="mt-1 text-xl font-bold text-zinc-950 dark:text-zinc-50">参加者向けトーク一覧</h2>
+        <p class="mt-2 text-sm text-zinc-600 dark:text-zinc-400">参加者に配る基本 URL です。ここから各トークの感想投稿へ進めます。</p>
+        <p class="mt-3 break-all text-sm text-zinc-600 dark:text-zinc-400"><%= public_conference_url(@conference) %></p>
+      </div>
+    </div>
+  </section>
+
+  <div class="grid gap-5 md:grid-cols-2 print:grid-cols-2">
+    <% @sessions.each do |session| %>
+      <article class="rounded-lg border border-zinc-200 dark:border-zinc-800/80 bg-white dark:bg-zinc-900/70 p-6 text-center break-inside-avoid">
+        <div class="mx-auto mb-4 flex w-fit justify-center rounded-md bg-white p-3">
+          <%= qrcode_svg(public_feedback_url(@conference, session)) %>
+        </div>
+        <h2 class="text-lg font-semibold text-zinc-950 dark:text-zinc-50"><%= session.title %></h2>
+        <p class="mt-1 text-sm text-zinc-600 dark:text-zinc-400"><%= session.speaker_name %></p>
+        <p class="mt-2 text-xs text-zinc-600 dark:text-zinc-400"><%= short_datetime(session.starts_at) %> - <%= short_datetime(session.ends_at) %></p>
+        <p class="mt-3 break-all text-xs text-zinc-600 dark:text-zinc-400"><%= public_feedback_url(@conference, session) %></p>
+      </article>
+    <% end %>
+  </div>
+</div>

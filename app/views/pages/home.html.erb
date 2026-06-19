@@ -1,0 +1,40 @@
+<section class="space-y-8">
+  <div class="grid gap-6 lg:grid-cols-[1.2fr_0.8fr] lg:items-end">
+    <div class="space-y-4">
+      <p class="text-sm font-semibold uppercase tracking-wide text-emerald-600 dark:text-emerald-300"><%= t("pages.home.eyebrow") %></p>
+      <h1 class="max-w-3xl text-4xl font-bold tracking-normal text-zinc-950 dark:text-zinc-50 sm:text-5xl"><%= t("pages.home.headline") %></h1>
+      <p class="max-w-2xl text-lg leading-8 text-zinc-600 dark:text-zinc-400">
+        <%= t("pages.home.lead") %>
+      </p>
+    </div>
+    <div class="flex flex-wrap gap-3 lg:justify-end">
+      <% if authenticated? %>
+        <%= link_to t("pages.home.dashboard"), conferences_path, class: "rounded-md bg-zinc-100 px-4 py-3 text-sm font-semibold text-zinc-950 hover:bg-white" %>
+      <% else %>
+        <%= link_to t("pages.home.login"), new_session_path, class: "rounded-md bg-zinc-100 px-4 py-3 text-sm font-semibold text-zinc-950 hover:bg-white" %>
+        <% if self_registration_enabled? %>
+          <%= link_to t("pages.home.register"), new_registration_path, class: "rounded-md border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-4 py-3 text-sm font-semibold text-zinc-900 dark:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800" %>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="space-y-4">
+    <h2 class="text-xl font-semibold text-zinc-950 dark:text-zinc-50"><%= t("pages.home.published") %></h2>
+    <% if @conferences.any? %>
+      <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <% @conferences.each do |conference| %>
+          <article class="rounded-lg border border-zinc-200 dark:border-zinc-800/80 bg-white dark:bg-zinc-900/70 p-5">
+            <h3 class="text-lg font-semibold"><%= link_to conference.name, public_conference_path(conference), class: "hover:text-emerald-600 dark:hover:text-emerald-300" %></h3>
+            <p class="mt-2 text-sm text-zinc-600 dark:text-zinc-400"><%= conference.venue.presence || "会場未定" %></p>
+            <p class="mt-1 text-sm text-zinc-600 dark:text-zinc-400"><%= l(conference.starts_on) %> - <%= l(conference.ends_on) %></p>
+          </article>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="rounded-lg border border-dashed border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900/70 p-8 text-center text-zinc-600 dark:text-zinc-400">
+        <%= t("pages.home.empty") %>
+      </div>
+    <% end %>
+  </div>
+</section>

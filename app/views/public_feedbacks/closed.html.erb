@@ -1,0 +1,12 @@
+<% content_for :title, "#{@session.title} - #{@conference.name}" %>
+<% content_for :og_title, "#{@session.title} - #{@conference.name}" %>
+<% content_for :og_description, @session.description.to_s.squish.presence || conference_og_description(@conference) %>
+
+<section class="rounded-lg border border-zinc-200 dark:border-zinc-800/80 bg-white dark:bg-zinc-900/70 p-8 text-center shadow-sm">
+  <p class="text-sm font-medium text-zinc-600 dark:text-zinc-400"><%= @conference.name %></p>
+  <h1 class="mt-3 text-2xl font-bold text-zinc-950 dark:text-zinc-50"><%= t("public_feedbacks.closed_title") %></h1>
+  <p class="mt-3 text-zinc-600 dark:text-zinc-400"><%= t("public_feedbacks.closed_body") %></p>
+  <div class="mt-6">
+    <%= link_to t("public_feedbacks.back_to_sessions"), public_conference_path(@conference), class: "inline-flex min-h-11 items-center justify-center rounded-md border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-4 py-2 text-sm font-semibold text-zinc-900 dark:text-zinc-100 transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-emerald-300 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-zinc-950" %>
+  </div>
+</section>

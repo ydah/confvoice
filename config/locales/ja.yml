@@ -1,0 +1,99 @@
+ja:
+  app:
+    name: "ConfVoice"
+    nav:
+      conferences: "カンファレンス"
+      users: "ユーザー管理"
+      login: "ログイン"
+      logout: "ログアウト"
+      register: "登録"
+      language: "Language"
+      primary: "主要ナビゲーション"
+    theme:
+      toggle: "テーマを切り替え"
+      light: "Light"
+      dark: "Dark"
+    flash:
+      login_required: "ログインしてください"
+      forbidden: "権限がありません"
+  pages:
+    home:
+      eyebrow: "Conference feedback"
+      headline: "ConfVoice"
+      lead: "セッションごとの感想を QR コードからすばやく集め、主催者が確認した感想だけを登壇者に共有できます。"
+      dashboard: "管理画面へ"
+      login: "ログイン"
+      register: "主催者登録"
+      published: "公開中のカンファレンス"
+      empty: "公開中のカンファレンスはまだありません。"
+  public_feedbacks:
+    back_to_sessions: "トーク一覧へ"
+    respondent_name: "お名前"
+    name_placeholder: "山田 太郎"
+    body: "感想"
+    placeholder: "感じたことを自由にお書きください"
+    submit: "感想を送る"
+    thanks_title: "ありがとうございます"
+    thanks_body: "感想を送信しました。この画面は閉じて構いません。"
+    closed_title: "受付終了"
+    closed_body: "このセッションの感想受付は終了しています。"
+  public_conferences:
+    eyebrow: "Talk list"
+    sessions_title: "トーク一覧"
+    send_feedback: "感想を書く"
+    closed: "受付終了"
+    empty: "トークはまだ登録されていません。"
+    venue_tbd: "会場未定"
+    room_tbd: "会場未定"
+  speaker_portals:
+    expired_title: "招待リンクは期限切れです"
+    expired_body: "主催者に新しいリンクの発行を依頼してください。"
+    latest_feedbacks: "最新の感想"
+    empty_feedbacks: "主催者から共有された感想はまだありません。"
+    word_cloud: "ワードクラウド"
+    slide: "スライドPDFを開く"
+  metrics:
+    feedback_count: "感想数"
+    average_rating: "平均評価"
+    reactions: "リアクション"
+  date:
+    formats:
+      default: "%Y/%m/%d"
+      short: "%m/%d"
+      long: "%Y年%m月%d日"
+  time:
+    formats:
+      default: "%Y/%m/%d %H:%M"
+      short: "%m/%d %H:%M"
+      long: "%Y年%m月%d日 %H:%M"
+  errors:
+    messages:
+      blank: "を入力してください"
+      taken: "はすでに存在します"
+      too_long: "は%{count}文字以内で入力してください"
+  activerecord:
+    models:
+      conference: "カンファレンス"
+      session: "セッション"
+      feedback: "感想"
+      user: "ユーザー"
+    attributes:
+      conference:
+        name: "カンファレンス名"
+        starts_on: "開始日"
+        ends_on: "終了日"
+        slug: "slug"
+      session:
+        title: "タイトル"
+        speaker_name: "登壇者名"
+        starts_at: "開始時刻"
+        ends_at: "終了時刻"
+        slug: "slug"
+      feedback:
+        respondent_name: "お名前"
+        rating: "評価"
+        body: "感想"
+      user:
+        email_address: "メールアドレス"
+        name: "名前"
+        password: "パスワード"

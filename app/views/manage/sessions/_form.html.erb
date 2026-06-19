@@ -1,0 +1,63 @@
+<% action_url = session_record.persisted? ? conference_manage_session_path(conference, session_record) : conference_manage_sessions_path(conference) %>
+
+<%= form_with model: session_record, url: action_url, class: "space-y-5" do |form| %>
+  <%= render "shared/errors", resource: session_record %>
+
+  <div>
+    <%= form.label :title, "タイトル", class: "block text-sm font-medium text-zinc-700 dark:text-zinc-300" %>
+    <%= form.text_field :title, required: true, class: "mt-2 w-full rounded-md border border-zinc-300 dark:border-zinc-700 px-3 py-2 focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" %>
+  </div>
+
+  <div>
+    <%= form.label :description, "概要", class: "block text-sm font-medium text-zinc-700 dark:text-zinc-300" %>
+    <%= form.text_area :description, rows: 4, class: "mt-2 w-full rounded-md border border-zinc-300 dark:border-zinc-700 px-3 py-2 focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" %>
+  </div>
+
+  <div class="grid gap-5 md:grid-cols-2">
+    <div>
+      <%= form.label :speaker_name, "登壇者名", class: "block text-sm font-medium text-zinc-700 dark:text-zinc-300" %>
+      <%= form.text_field :speaker_name, required: true, class: "mt-2 w-full rounded-md border border-zinc-300 dark:border-zinc-700 px-3 py-2 focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" %>
+    </div>
+    <div>
+      <%= form.label :speaker_user_id, "登壇者ユーザー", class: "block text-sm font-medium text-zinc-700 dark:text-zinc-300" %>
+      <%= form.collection_select :speaker_user_id, conference.members.order(:name), :id, :name, { include_blank: "紐付けなし" }, class: "mt-2 w-full rounded-md border border-zinc-300 dark:border-zinc-700 px-3 py-2 focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" %>
+    </div>
+  </div>
+
+  <div>
+    <%= form.label :room, "会場・部屋", class: "block text-sm font-medium text-zinc-700 dark:text-zinc-300" %>
+    <%= form.text_field :room, class: "mt-2 w-full rounded-md border border-zinc-300 dark:border-zinc-700 px-3 py-2 focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" %>
+  </div>
+
+  <div class="grid gap-5 md:grid-cols-2">
+    <div>
+      <%= form.label :starts_at, "開始時刻", class: "block text-sm font-medium text-zinc-700 dark:text-zinc-300" %>
+      <%= form.datetime_field :starts_at, required: true, class: "mt-2 w-full rounded-md border border-zinc-300 dark:border-zinc-700 px-3 py-2 focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" %>
+    </div>
+    <div>
+      <%= form.label :ends_at, "終了時刻", class: "block text-sm font-medium text-zinc-700 dark:text-zinc-300" %>
+      <%= form.datetime_field :ends_at, required: true, class: "mt-2 w-full rounded-md border border-zinc-300 dark:border-zinc-700 px-3 py-2 focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" %>
+    </div>
+  </div>
+
+  <label class="flex items-center gap-3 text-sm font-medium text-zinc-700 dark:text-zinc-300">
+    <%= form.check_box :feedback_open, class: "size-4 rounded border-zinc-300 dark:border-zinc-700 text-emerald-600 dark:text-emerald-300 focus:ring-emerald-600" %>
+    感想を受け付ける
+  </label>
+
+  <div>
+    <%= form.label :slide_deck, "スライドPDF", class: "block text-sm font-medium text-zinc-700 dark:text-zinc-300" %>
+    <%= form.file_field :slide_deck, accept: "application/pdf", class: "mt-2 w-full rounded-md border border-zinc-300 dark:border-zinc-700 px-3 py-2 file:mr-4 file:rounded-md file:border-0 file:bg-zinc-100 dark:file:bg-zinc-100 dark:bg-zinc-800 file:px-3 file:py-2 file:text-sm file:font-semibold file:text-zinc-950 dark:file:text-white" %>
+    <% if session_record.slide_deck.attached? %>
+      <p class="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
+        添付済み:
+        <%= link_to session_record.slide_deck.filename.to_s, rails_blob_path(session_record.slide_deck, disposition: "inline"), class: "font-semibold text-emerald-600 dark:text-emerald-300 hover:text-emerald-700 dark:hover:text-emerald-200" %>
+      </p>
+    <% end %>
+  </div>
+
+  <div class="flex flex-wrap gap-3">
+    <%= form.submit "保存", class: "rounded-md bg-zinc-100 px-4 py-3 text-sm font-semibold text-zinc-950 hover:bg-white" %>
+    <%= link_to "戻る", conference_manage_sessions_path(conference), class: "rounded-md border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-4 py-3 text-sm font-semibold text-zinc-900 dark:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800" %>
+  </div>
+<% end %>

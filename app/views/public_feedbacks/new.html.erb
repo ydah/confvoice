@@ -1,0 +1,29 @@
+<% content_for :title, "#{@session.title} - #{@conference.name}" %>
+<% content_for :og_title, "#{@session.title} - #{@conference.name}" %>
+<% content_for :og_description, @session.description.to_s.squish.presence || conference_og_description(@conference) %>
+
+<section class="rounded-lg border border-zinc-200 dark:border-zinc-800/80 bg-white dark:bg-zinc-900/70 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] sm:p-6">
+  <div class="mb-6 border-b border-zinc-200 dark:border-zinc-800 pb-5">
+    <%= link_to t("public_feedbacks.back_to_sessions"), public_conference_path(@conference), class: "inline-flex rounded-md border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950/70 px-3 py-2 text-sm font-semibold text-emerald-700 dark:text-emerald-200 transition-colors hover:border-zinc-300 dark:hover:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-900/70" %>
+    <p class="mt-3 text-sm font-medium text-zinc-600 dark:text-zinc-400"><%= @conference.name %></p>
+    <h1 class="mt-2 text-2xl font-semibold tracking-normal text-zinc-950 dark:text-zinc-50"><%= @session.title %></h1>
+    <p class="mt-1 text-zinc-600 dark:text-zinc-400"><%= @session.speaker_name %></p>
+  </div>
+
+  <%= form_with model: @feedback, url: public_feedback_path(@conference, @session), class: "space-y-5" do |form| %>
+    <%= render "shared/errors", resource: @feedback %>
+
+    <div>
+      <%= form.label :respondent_name, t("public_feedbacks.respondent_name"), class: "block text-base font-semibold text-zinc-950 dark:text-zinc-50" %>
+      <%= form.text_field :respondent_name, required: true, maxlength: 80, autocomplete: "name", placeholder: t("public_feedbacks.name_placeholder"), class: "mt-3 w-full rounded-md border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-950/80 px-4 py-3 text-base transition-colors focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" %>
+    </div>
+
+    <div data-controller="char-count">
+      <%= form.label :body, t("public_feedbacks.body"), class: "block text-base font-semibold text-zinc-950 dark:text-zinc-50" %>
+      <%= form.text_area :body, rows: 7, required: true, maxlength: 2000, placeholder: t("public_feedbacks.placeholder"), data: { char_count_target: "input", action: "input->char-count#update" }, class: "mt-3 w-full rounded-md border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-950/80 px-4 py-3 text-base leading-7 transition-colors focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" %>
+      <p class="mt-1 text-right text-sm text-zinc-600 dark:text-zinc-400"><span data-char-count-target="count">0</span>/2000</p>
+    </div>
+
+    <%= form.submit t("public_feedbacks.submit"), class: "w-full cursor-pointer rounded-md bg-emerald-400 px-4 py-3 text-base font-semibold text-zinc-950 transition-colors hover:bg-emerald-300 focus:outline-none focus:ring-2 focus:ring-emerald-300 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-zinc-950" %>
+  <% end %>
+</section>

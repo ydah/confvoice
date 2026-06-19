@@ -1,0 +1,37 @@
+<div class="space-y-6">
+  <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div>
+      <h1 class="text-2xl font-bold text-zinc-950 dark:text-zinc-50">カンファレンス</h1>
+      <p class="mt-1 text-sm text-zinc-600 dark:text-zinc-400">管理できるカンファレンス一覧</p>
+    </div>
+    <%= link_to "新規作成", new_conference_path, class: "rounded-md bg-zinc-100 px-4 py-3 text-sm font-semibold text-zinc-950 hover:bg-white" %>
+  </div>
+
+  <% if @conferences.any? %>
+    <div class="grid gap-4 md:grid-cols-2">
+      <% @conferences.each do |conference| %>
+        <article class="rounded-lg border border-zinc-200 dark:border-zinc-800/80 bg-white dark:bg-zinc-900/70 p-5">
+          <div class="flex items-start justify-between gap-4">
+            <div>
+              <h2 class="text-lg font-semibold"><%= link_to conference.name, conference_path(conference), class: "hover:text-emerald-600 dark:hover:text-emerald-300" %></h2>
+              <p class="mt-1 text-sm text-zinc-600 dark:text-zinc-400"><%= conference.venue.presence || "会場未定" %></p>
+              <p class="mt-1 text-sm text-zinc-600 dark:text-zinc-400"><%= l(conference.starts_on) %> - <%= l(conference.ends_on) %></p>
+            </div>
+            <span class="rounded-full px-3 py-1 text-xs font-semibold <%= conference.published? ? "bg-emerald-50 dark:bg-emerald-400/10 text-emerald-700 dark:text-emerald-200" : "bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400" %>">
+              <%= conference.published? ? "公開" : "非公開" %>
+            </span>
+          </div>
+          <div class="mt-5 flex flex-wrap gap-2 text-sm">
+            <%= link_to "ダッシュボード", conference_dashboard_path(conference), class: "rounded-md border border-zinc-300 dark:border-zinc-700 px-3 py-2 font-medium hover:bg-zinc-100 dark:hover:bg-zinc-800" %>
+            <%= link_to "セッション管理", conference_manage_sessions_path(conference), class: "rounded-md border border-zinc-300 dark:border-zinc-700 px-3 py-2 font-medium hover:bg-zinc-100 dark:hover:bg-zinc-800" %>
+            <%= link_to "QR", conference_qrcodes_path(conference), class: "rounded-md border border-zinc-300 dark:border-zinc-700 px-3 py-2 font-medium hover:bg-zinc-100 dark:hover:bg-zinc-800" %>
+          </div>
+        </article>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="rounded-lg border border-dashed border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900/70 p-8 text-center text-zinc-600 dark:text-zinc-400">
+      まだ管理できるカンファレンスがありません。
+    </div>
+  <% end %>
+</div>

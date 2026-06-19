@@ -1,0 +1,11 @@
+新しい感想が届きました
+
+<%= @conference.name %> の <%= @session.title %> に感想が投稿されました。
+
+名前: <%= @feedback.respondent_name %>
+
+<% if @feedback.rating.present? %>
+評価: <%= @feedback.rating %> / 5
+<% end %>
+
+<%= @feedback.body %>

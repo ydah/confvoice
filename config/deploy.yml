@@ -1,0 +1,48 @@
+service: confvoice
+image: your-registry/confvoice
+
+servers:
+  web:
+    hosts:
+      - xxx.xxx.xxx.xxx
+    options:
+      memory: 512m
+
+proxy:
+  ssl: true
+  host: confvoice.example.com
+
+registry:
+  server: ghcr.io
+  username: your-github-username
+  password:
+    - KAMAL_REGISTRY_PASSWORD
+
+env:
+  clear:
+    RAILS_SERVE_STATIC_FILES: "true"
+    APP_HOST: confvoice.example.com
+    ACTIVE_STORAGE_SERVICE: local
+    RAILS_ASSUME_SSL: "true"
+    RAILS_FORCE_SSL: "true"
+  secret:
+    - RAILS_MASTER_KEY
+    - DATABASE_URL
+    - MAIL_FROM
+    - SMTP_ADDRESS
+    - SMTP_USERNAME
+    - SMTP_PASSWORD
+
+builder:
+  arch: amd64
+
+accessories:
+  db:
+    image: postgres:16
+    host: xxx.xxx.xxx.xxx
+    port: "127.0.0.1:5432:5432"
+    env:
+      secret:
+        - POSTGRES_PASSWORD
+    directories:
+      - data:/var/lib/postgresql/data

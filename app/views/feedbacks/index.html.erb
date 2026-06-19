@@ -1,0 +1,20 @@
+<div class="space-y-6">
+  <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div>
+      <p class="text-sm text-zinc-600 dark:text-zinc-400"><%= @conference.name %></p>
+      <h1 class="text-2xl font-bold text-zinc-950 dark:text-zinc-50"><%= @session.title %> の感想</h1>
+      <p class="mt-2 text-sm leading-6 text-zinc-600 dark:text-zinc-400">登壇者には「共有中」の感想だけが表示されます。投稿直後の感想は主催者だけに表示されます。</p>
+    </div>
+    <%= link_to "CSV 出力", conference_export_path(@conference, format: :csv), class: "rounded-md border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2 text-sm font-semibold hover:bg-zinc-100 dark:hover:bg-zinc-800" %>
+  </div>
+
+  <% if @feedbacks.any? %>
+    <div class="space-y-3">
+      <%= render partial: "feedbacks/feedback_card", collection: @feedbacks, as: :feedback, locals: { moderation: organizer_for?(@conference) } %>
+    </div>
+  <% else %>
+    <div class="rounded-lg border border-dashed border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900/70 p-8 text-center text-zinc-600 dark:text-zinc-400">
+      まだ感想はありません。
+    </div>
+  <% end %>
+</div>

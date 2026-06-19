@@ -1,0 +1,32 @@
+<div class="space-y-6">
+  <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div>
+      <h1 class="text-2xl font-bold text-zinc-950 dark:text-zinc-50">ユーザー管理</h1>
+      <p class="mt-1 text-sm text-zinc-600 dark:text-zinc-400">管理者、主催者、聴衆ロールを管理します。</p>
+    </div>
+    <%= link_to "新規作成", new_admin_user_path, class: "rounded-md bg-zinc-100 px-4 py-3 text-sm font-semibold text-zinc-950 hover:bg-white" %>
+  </div>
+
+  <div class="overflow-hidden rounded-lg border border-zinc-200 dark:border-zinc-800/80 bg-white dark:bg-zinc-900/70">
+    <table class="min-w-full divide-y divide-zinc-200 dark:divide-zinc-800 text-sm">
+      <thead class="bg-zinc-100 dark:bg-zinc-800 text-left text-zinc-600 dark:text-zinc-400">
+        <tr>
+          <th class="px-4 py-3 font-semibold">名前</th>
+          <th class="px-4 py-3 font-semibold">メール</th>
+          <th class="px-4 py-3 font-semibold">ロール</th>
+          <th class="px-4 py-3 font-semibold"></th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-zinc-200 dark:divide-zinc-800">
+        <% @users.each do |user| %>
+          <tr>
+            <td class="px-4 py-3 font-medium text-zinc-950 dark:text-zinc-50"><%= link_to user.name, admin_user_path(user), class: "hover:text-emerald-600 dark:hover:text-emerald-300" %></td>
+            <td class="px-4 py-3 text-zinc-600 dark:text-zinc-400"><%= user.email_address %></td>
+            <td class="px-4 py-3 text-zinc-600 dark:text-zinc-400"><%= user.role %></td>
+            <td class="px-4 py-3 text-right"><%= link_to "編集", edit_admin_user_path(user), class: "font-semibold text-emerald-600 dark:text-emerald-300 hover:text-emerald-700 dark:hover:text-emerald-200" %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

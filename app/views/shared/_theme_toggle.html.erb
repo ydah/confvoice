@@ -1,0 +1,11 @@
+<button
+  type="button"
+  data-controller="theme"
+  data-action="theme#toggle"
+  aria-label="<%= t("app.theme.toggle") %>"
+  aria-pressed="false"
+  class="inline-grid min-h-11 grid-cols-2 items-center rounded-md border border-zinc-200 bg-zinc-100 p-1 text-xs font-semibold text-zinc-600 shadow-sm transition-colors dark:border-zinc-800/80 dark:bg-zinc-900 dark:text-zinc-400"
+>
+  <span data-theme-target="lightLabel" class="rounded px-2 py-1 transition-colors"><%= t("app.theme.light") %></span>
+  <span data-theme-target="darkLabel" class="rounded px-2 py-1 transition-colors"><%= t("app.theme.dark") %></span>
+</button>

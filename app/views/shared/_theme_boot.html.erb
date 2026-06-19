@@ -1,0 +1,18 @@
+<%= javascript_tag nonce: true do %>
+  (() => {
+    const storageKey = "confvoice-theme";
+    let theme = "dark";
+
+    try {
+      const storedTheme = localStorage.getItem(storageKey);
+      if (storedTheme === "light" || storedTheme === "dark") {
+        theme = storedTheme;
+      }
+    } catch (_) {
+      theme = "dark";
+    }
+
+    document.documentElement.classList.toggle("dark", theme === "dark");
+    document.documentElement.dataset.theme = theme;
+  })();
+<% end %>

@@ -1,0 +1,46 @@
+<div class="space-y-8">
+  <section class="space-y-4">
+    <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+      <div>
+        <p class="text-sm font-semibold uppercase tracking-wide text-emerald-600 dark:text-emerald-300"><%= @conference.published? ? "公開中" : "非公開" %></p>
+        <h1 class="mt-2 text-3xl font-bold text-zinc-950 dark:text-zinc-50"><%= @conference.name %></h1>
+        <p class="mt-2 text-zinc-600 dark:text-zinc-400"><%= @conference.venue.presence || "会場未定" %> / <%= l(@conference.starts_on) %> - <%= l(@conference.ends_on) %></p>
+      </div>
+      <% if authenticated? && organizer_for?(@conference) %>
+        <div class="flex flex-wrap gap-2">
+          <%= link_to "編集", edit_conference_path(@conference), class: "rounded-md border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2 text-sm font-semibold hover:bg-zinc-100 dark:hover:bg-zinc-800" %>
+          <%= link_to "管理", conference_manage_sessions_path(@conference), class: "rounded-md bg-zinc-100 px-3 py-2 text-sm font-semibold text-zinc-950 hover:bg-white" %>
+        </div>
+      <% end %>
+    </div>
+    <% if @conference.description.present? %>
+      <p class="max-w-3xl whitespace-pre-line text-zinc-700 dark:text-zinc-300"><%= @conference.description %></p>
+    <% end %>
+  </section>
+
+  <section class="space-y-4">
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <h2 class="text-xl font-semibold text-zinc-950 dark:text-zinc-50">セッション</h2>
+      <%= link_to "一覧で見る", conference_sessions_path(@conference), class: "text-sm font-semibold text-emerald-600 dark:text-emerald-300 hover:text-emerald-700 dark:hover:text-emerald-200" %>
+    </div>
+
+    <% if @sessions.any? %>
+      <div class="grid gap-4 md:grid-cols-2">
+        <% @sessions.each do |session| %>
+          <article class="rounded-lg border border-zinc-200 dark:border-zinc-800/80 bg-white dark:bg-zinc-900/70 p-5">
+            <h3 class="text-lg font-semibold"><%= link_to session.title, public_feedback_path(@conference, session), class: "hover:text-emerald-600 dark:hover:text-emerald-300" %></h3>
+            <p class="mt-1 text-sm text-zinc-600 dark:text-zinc-400"><%= session.speaker_name %></p>
+            <p class="mt-2 text-sm text-zinc-600 dark:text-zinc-400"><%= short_datetime(session.starts_at) %> - <%= short_datetime(session.ends_at) %> / <%= session.room.presence || "会場未定" %></p>
+            <div class="mt-4">
+              <%= link_to "感想を送る", public_feedback_path(@conference, session), class: "rounded-md bg-emerald-400 px-3 py-2 text-sm font-semibold text-zinc-950 hover:bg-emerald-300" %>
+            </div>
+          </article>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="rounded-lg border border-dashed border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900/70 p-8 text-center text-zinc-600 dark:text-zinc-400">
+        セッションはまだ登録されていません。
+      </div>
+    <% end %>
+  </section>
+</div>

@@ -1,0 +1,70 @@
+<%= turbo_stream_from @conference, "feedbacks" %>
+<%= turbo_stream_from @conference, "stats" %>
+
+<div class="space-y-8">
+  <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div>
+      <p class="text-sm text-zinc-600 dark:text-zinc-400"><%= @conference.name %></p>
+      <h1 class="text-2xl font-bold text-zinc-950 dark:text-zinc-50">ダッシュボード</h1>
+    </div>
+    <div class="flex flex-wrap gap-2">
+      <%= link_to "CSV", conference_export_path(@conference, format: :csv), class: "rounded-md border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2 text-sm font-semibold hover:bg-zinc-100 dark:hover:bg-zinc-800" %>
+      <%= link_to "QR", conference_qrcodes_path(@conference), class: "rounded-md border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2 text-sm font-semibold hover:bg-zinc-100 dark:hover:bg-zinc-800" %>
+    </div>
+  </div>
+
+  <section class="grid gap-4 md:grid-cols-3">
+    <div class="rounded-lg border border-zinc-200 dark:border-zinc-800/80 bg-white dark:bg-zinc-900/70 p-5">
+      <p class="text-sm text-zinc-600 dark:text-zinc-400">感想数</p>
+      <p class="mt-2 text-3xl font-bold text-zinc-950 dark:text-zinc-50"><%= @total_count %></p>
+    </div>
+    <div class="rounded-lg border border-zinc-200 dark:border-zinc-800/80 bg-white dark:bg-zinc-900/70 p-5">
+      <p class="text-sm text-zinc-600 dark:text-zinc-400">平均評価</p>
+      <p class="mt-2 text-3xl font-bold text-zinc-950 dark:text-zinc-50"><%= @overall_average || "なし" %></p>
+    </div>
+    <div class="rounded-lg border border-zinc-200 dark:border-zinc-800/80 bg-white dark:bg-zinc-900/70 p-5">
+      <p class="text-sm text-zinc-600 dark:text-zinc-400">セッション数</p>
+      <p class="mt-2 text-3xl font-bold text-zinc-950 dark:text-zinc-50"><%= @sessions.size %></p>
+    </div>
+  </section>
+
+  <section class="rounded-lg border border-zinc-200 dark:border-zinc-800/80 bg-white dark:bg-zinc-900/70 p-5">
+    <h2 class="text-lg font-semibold text-zinc-950 dark:text-zinc-50">セッション別評価</h2>
+    <div class="mt-4">
+      <%= bar_chart @sessions.map { |session| [session.title.truncate(30), session.average_rating || 0] }, min: 0, max: 5, colors: ["#047857"], empty: "データがありません" %>
+    </div>
+  </section>
+
+  <section class="rounded-lg border border-zinc-200 dark:border-zinc-800/80 bg-white dark:bg-zinc-900/70 p-5">
+    <h2 class="text-lg font-semibold text-zinc-950 dark:text-zinc-50">感想数推移</h2>
+    <div class="mt-4">
+      <%= line_chart @feedbacks_by_day, colors: ["#0f766e"], empty: "データがありません" %>
+    </div>
+  </section>
+
+  <% if @keywords.any? %>
+    <% max_count = @keywords.first.last %>
+    <section class="rounded-lg border border-zinc-200 dark:border-zinc-800/80 bg-white dark:bg-zinc-900/70 p-5">
+      <h2 class="text-lg font-semibold text-zinc-950 dark:text-zinc-50">ワードクラウド</h2>
+      <div class="mt-4 flex flex-wrap items-center gap-3">
+        <% @keywords.each do |word, count| %>
+          <span class="<%= keyword_size_class(count, max_count) %> rounded-full bg-emerald-50 dark:bg-emerald-400/10 px-3 py-1 font-semibold text-emerald-700 dark:text-emerald-200"><%= word %></span>
+        <% end %>
+      </div>
+    </section>
+  <% end %>
+
+  <section class="grid gap-4 lg:grid-cols-[0.9fr_1.1fr]">
+    <div class="space-y-3">
+      <h2 class="text-lg font-semibold text-zinc-950 dark:text-zinc-50">セッション別サマリー</h2>
+      <%= render partial: "dashboards/session_stats", collection: @sessions, as: :session %>
+    </div>
+
+    <div class="space-y-3">
+      <h2 class="text-lg font-semibold text-zinc-950 dark:text-zinc-50">最新の感想</h2>
+      <div id="feedbacks_list" class="space-y-3">
+        <%= render partial: "feedbacks/feedback_card", collection: @recent_feedbacks, as: :feedback %>
+      </div>
+    </div>
+  </section>
+</div>

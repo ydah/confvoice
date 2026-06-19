@@ -1,0 +1,72 @@
+<div class="space-y-6">
+  <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div>
+      <p class="text-sm text-zinc-600 dark:text-zinc-400"><%= @conference.name %></p>
+      <h1 class="text-2xl font-bold text-zinc-950 dark:text-zinc-50">メンバー管理</h1>
+    </div>
+    <%= link_to "セッション管理", conference_manage_sessions_path(@conference), class: "rounded-md border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2 text-sm font-semibold hover:bg-zinc-100 dark:hover:bg-zinc-800" %>
+  </div>
+
+  <% if @membership_errors.present? %>
+    <div class="rounded-md border border-red-200 dark:border-red-500/40 bg-red-50 dark:bg-red-500/10 px-4 py-3 text-sm text-red-700 dark:text-red-200">
+      <% @membership_errors.each do |message| %>
+        <p><%= message %></p>
+      <% end %>
+    </div>
+  <% end %>
+
+  <section class="rounded-lg border border-zinc-200 dark:border-zinc-800/80 bg-white dark:bg-zinc-900/70 p-5">
+    <h2 class="text-lg font-semibold text-zinc-950 dark:text-zinc-50">メンバー追加</h2>
+    <%= form_with scope: :conference_membership, url: conference_manage_memberships_path(@conference), class: "mt-5 grid gap-4 md:grid-cols-2 lg:grid-cols-5" do |form| %>
+      <div class="lg:col-span-1">
+        <%= form.label :role, "ロール", class: "block text-sm font-medium text-zinc-700 dark:text-zinc-300" %>
+        <%= form.select :role, ConferenceMembership.roles.keys.map { |role| [role, role] }, {}, class: "mt-2 w-full rounded-md border border-zinc-300 dark:border-zinc-700 px-3 py-2" %>
+      </div>
+      <div>
+        <%= form.label :email_address, "メール", class: "block text-sm font-medium text-zinc-700 dark:text-zinc-300" %>
+        <%= form.email_field :email_address, required: true, class: "mt-2 w-full rounded-md border border-zinc-300 dark:border-zinc-700 px-3 py-2" %>
+      </div>
+      <div>
+        <%= form.label :name, "名前", class: "block text-sm font-medium text-zinc-700 dark:text-zinc-300" %>
+        <%= form.text_field :name, class: "mt-2 w-full rounded-md border border-zinc-300 dark:border-zinc-700 px-3 py-2" %>
+      </div>
+      <div>
+        <%= form.label :password, "初期パスワード", class: "block text-sm font-medium text-zinc-700 dark:text-zinc-300" %>
+        <%= form.password_field :password, class: "mt-2 w-full rounded-md border border-zinc-300 dark:border-zinc-700 px-3 py-2" %>
+      </div>
+      <div class="flex items-end">
+        <%= form.submit "追加", class: "w-full rounded-md bg-zinc-100 px-4 py-3 text-sm font-semibold text-zinc-950 hover:bg-white" %>
+      </div>
+    <% end %>
+  </section>
+
+  <section class="overflow-hidden rounded-lg border border-zinc-200 dark:border-zinc-800/80 bg-white dark:bg-zinc-900/70">
+    <table class="min-w-full divide-y divide-zinc-200 dark:divide-zinc-800 text-sm">
+      <thead class="bg-zinc-100 dark:bg-zinc-800 text-left text-zinc-600 dark:text-zinc-400">
+        <tr>
+          <th class="px-4 py-3 font-semibold">名前</th>
+          <th class="px-4 py-3 font-semibold">メール</th>
+          <th class="px-4 py-3 font-semibold">ロール</th>
+          <th class="px-4 py-3 font-semibold"></th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-zinc-200 dark:divide-zinc-800">
+        <% @memberships.each do |membership| %>
+          <tr>
+            <td class="px-4 py-3 font-medium text-zinc-950 dark:text-zinc-50"><%= membership.user.name %></td>
+            <td class="px-4 py-3 text-zinc-600 dark:text-zinc-400"><%= membership.user.email_address %></td>
+            <td class="px-4 py-3">
+              <%= form_with model: membership, url: conference_manage_membership_path(@conference, membership), method: :patch, class: "flex gap-2" do |form| %>
+                <%= form.select :role, ConferenceMembership.roles.keys.map { |role| [role, role] }, {}, class: "rounded-md border border-zinc-300 dark:border-zinc-700 px-2 py-1" %>
+                <%= form.submit "更新", class: "rounded-md border border-zinc-300 dark:border-zinc-700 px-2 py-1 font-semibold hover:bg-zinc-100 dark:hover:bg-zinc-800" %>
+              <% end %>
+            </td>
+            <td class="px-4 py-3 text-right">
+              <%= button_to "削除", conference_manage_membership_path(@conference, membership), method: :delete, class: "font-semibold text-red-600 dark:text-red-300 hover:text-red-700 dark:hover:text-red-200", form: { data: { turbo_confirm: "削除しますか？" } } %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </section>
+</div>

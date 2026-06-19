@@ -1,0 +1,72 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@layer base {
+  html {
+    color-scheme: light;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  html.dark {
+    color-scheme: dark;
+  }
+
+  body {
+    background-color: #fafafa;
+  }
+
+  html.dark body {
+    background-color: #09090b;
+  }
+
+  input,
+  textarea,
+  select {
+    background-color: #ffffff;
+    color: #18181b;
+    border-color: #d4d4d8;
+  }
+
+  html.dark input,
+  html.dark textarea,
+  html.dark select {
+    background-color: #09090b;
+    color: #fafafa;
+    border-color: #3f3f46;
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    color: #a1a1aa;
+  }
+
+  html.dark input::placeholder,
+  html.dark textarea::placeholder {
+    color: #71717a;
+  }
+
+  input[type="date"],
+  input[type="datetime-local"] {
+    color-scheme: light;
+  }
+
+  html.dark input[type="date"],
+  html.dark input[type="datetime-local"] {
+    color-scheme: dark;
+  }
+
+  button,
+  input[type="submit"] {
+    cursor: pointer;
+  }
+
+  ::selection {
+    background-color: rgb(52 211 153 / 0.28);
+    color: #18181b;
+  }
+
+  html.dark ::selection {
+    color: #f4f4f5;
+  }
+}
