@@ -9,8 +9,9 @@ class PublicFeedbackFlowTest < ActionDispatch::IntegrationTest
     get public_feedback_path(session.conference, session)
     assert_response :success
     assert_select "a[href=?]", public_conference_path(session.conference), text: "トーク一覧へ"
-    assert_select "input[name=?]", "feedback[respondent_name]"
-    assert_select "textarea[name=?]", "feedback[body]"
+    assert_select "form[data-controller=?][data-feedback-draft-key-value=?]", "feedback-draft", "feedback-draft:#{session.conference.slug}:#{session.slug}"
+    assert_select "input[name=?][data-feedback-draft-target=?]", "feedback[respondent_name]", "field"
+    assert_select "textarea[name=?][data-feedback-draft-target=?]", "feedback[body]", "field"
     assert_select "input[name=?]", "feedback[rating]", count: 0
 
     assert_difference "Feedback.count", 1 do
