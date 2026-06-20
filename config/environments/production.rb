@@ -55,9 +55,11 @@ Rails.application.configure do
 
   config.action_mailer.raise_delivery_errors = ENV.fetch("RAISE_DELIVERY_ERRORS", "true") == "true"
 
+  app_host = ENV.fetch("APP_HOST") { ENV.fetch("RENDER_EXTERNAL_HOSTNAME", "confvoice.example.com") }
+
   # Set host to be used by links generated in mailer templates.
   config.action_mailer.default_url_options = {
-    host: ENV.fetch("APP_HOST", "confvoice.example.com"),
+    host: app_host,
     protocol: "https"
   }
 
@@ -84,7 +86,7 @@ Rails.application.configure do
   config.active_record.attributes_for_inspect = [ :id ]
 
   # Enable DNS rebinding protection and other `Host` header attacks.
-  config.hosts << ENV.fetch("APP_HOST", "confvoice.example.com")
+  config.hosts << app_host
   #
   # Skip DNS rebinding protection for the default health check endpoint.
   # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }

@@ -73,6 +73,30 @@ bin/rails zeitwerk:check
 
 ## Deployment
 
+### Render
+
+This repository includes `render.yaml` for a Docker-based Render Blueprint. It creates:
+
+- One Docker web service
+- One Render Postgres database
+- `DATABASE_URL`, `CACHE_DATABASE_URL`, `QUEUE_DATABASE_URL`, and `CABLE_DATABASE_URL` pointing at the same internal database
+- Solid Queue running inside Puma for the single-service deployment
+
+Deploy steps:
+
+1. Push this repository to GitHub/GitLab/Bitbucket.
+2. In Render, create a new Blueprint instance from this repository.
+3. When prompted for `RAILS_MASTER_KEY`, paste the contents of `config/master.key`.
+4. Deploy.
+
+On Render, the app uses `RENDER_EXTERNAL_HOSTNAME` automatically for host authorization and mailer URLs. If you add a custom domain, set `APP_HOST` to that domain in the web service environment variables.
+
+The Docker entrypoint runs `bin/rails db:prepare` before starting the Rails server, so the initial deploy and later migrations are applied at boot. For higher-traffic production use, move migrations to a paid Render pre-deploy command instead of running them during boot.
+
+`ACTIVE_STORAGE_SERVICE` defaults to `local`. Render service filesystems are ephemeral, so configure an external Active Storage service before relying on uploaded PDF attachments in production.
+
+### Kamal
+
 `config/deploy.yml` is prepared for Kamal 2. Replace the placeholder host, image, registry user, and secrets before running:
 
 ```bash
