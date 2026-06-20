@@ -9,32 +9,21 @@
     <% if @conference.present? %>
       <% og_title = content_for?(:og_title) ? content_for(:og_title) : @conference.name %>
       <% og_description = content_for?(:og_description) ? content_for(:og_description) : conference_og_description(@conference) %>
-      <% og_image_url = conference_og_image_url(@conference) %>
-      <%= tag.meta name: "description", content: og_description %>
-      <%= tag.meta property: "og:site_name", content: t("app.name") %>
-      <%= tag.meta property: "og:type", content: "website" %>
-      <%= tag.meta property: "og:title", content: og_title %>
-      <%= tag.meta property: "og:description", content: og_description %>
-      <%= tag.meta property: "og:url", content: request.original_url %>
-      <%= tag.meta name: "twitter:card", content: og_image_url.present? ? "summary_large_image" : "summary" %>
-      <%= tag.meta name: "twitter:title", content: og_title %>
-      <%= tag.meta name: "twitter:description", content: og_description %>
-      <% if og_image_url.present? %>
-        <%= tag.meta property: "og:image", content: og_image_url %>
-        <%= tag.meta property: "og:image:secure_url", content: og_image_url %>
-        <%= tag.meta property: "og:image:type", content: @conference.ogp_image.blob.content_type %>
-        <%= tag.meta property: "og:image:alt", content: conference_og_image_alt(@conference) %>
-        <%= tag.meta name: "twitter:image", content: og_image_url %>
-      <% end %>
+      <%= render "shared/social_meta",
+            title: og_title,
+            description: og_description,
+            url: request.original_url,
+            image_url: conference_og_image_url(@conference),
+            image_type: conference_og_image_type(@conference),
+            image_alt: conference_og_image_alt(@conference) %>
     <% end %>
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
     <%= yield :head %>
 
-    <link rel="icon" href="/icon.png" type="image/png">
-    <link rel="icon" href="/icon.svg" type="image/svg+xml">
-    <link rel="apple-touch-icon" href="/icon.png">
+    <%= favicon_link_tag "/favicon.ico" %>
+    <%= tag.link rel: "apple-touch-icon", href: "/logo.png" %>
 
     <%= render "shared/theme_boot" %>
     <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>

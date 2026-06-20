@@ -10,13 +10,14 @@ class Manage::SessionsControllerTest < ActionDispatch::IntegrationTest
     get new_conference_manage_session_path(conference)
 
     assert_response :success
-    assert_select "select[name=?]", "session[starts_on]" do
+    assert_select "select[name=?]", "session[scheduled_on]" do
       assert_select "option", count: 3
       assert_select "option[value=?]", "2026-06-20"
       assert_select "option[value=?]", "2026-06-21"
       assert_select "option[value=?]", "2026-06-22"
       assert_select "option[value=?]", "2026-06-23", count: 0
     end
+    assert_select "select[name=?]", "session[ends_on]", count: 0
     assert_select "input[type=time][name=?]", "session[starts_time]"
   end
 
@@ -55,9 +56,8 @@ class Manage::SessionsControllerTest < ActionDispatch::IntegrationTest
         description: "基調講演",
         speaker_name: "Matz",
         room: "Main Hall",
-        starts_on: "2026-06-20",
+        scheduled_on: "2026-06-20",
         starts_time: "10:30",
-        ends_on: "2026-06-20",
         ends_time: "11:20",
         feedback_open: "1"
       }

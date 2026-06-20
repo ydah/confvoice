@@ -5,16 +5,24 @@
   </div>
 
   <% if @sessions.any? %>
-    <div class="grid gap-4 md:grid-cols-2">
-      <% @sessions.each do |session| %>
-        <article class="rounded-lg border border-zinc-200 dark:border-zinc-800/80 bg-white dark:bg-zinc-900/70 p-5">
-          <h2 class="text-lg font-semibold"><%= link_to session.title, conference_session_path(@conference, session), class: "hover:text-emerald-600 dark:hover:text-emerald-300" %></h2>
-          <p class="mt-1 text-sm text-zinc-600 dark:text-zinc-400"><%= session.speaker_name %></p>
-          <p class="mt-2 text-sm text-zinc-600 dark:text-zinc-400"><%= short_datetime(session.starts_at) %> - <%= short_datetime(session.ends_at) %> / <%= session.room.presence || "会場未定" %></p>
-          <div class="mt-4">
-            <%= link_to "感想を送る", public_feedback_path(@conference, session), class: "rounded-md bg-emerald-400 px-3 py-2 text-sm font-semibold text-zinc-950 hover:bg-emerald-300" %>
+    <div class="space-y-6">
+      <% session_date_groups(@sessions).each do |date, sessions| %>
+        <section class="space-y-3">
+          <h2 class="text-base font-semibold text-zinc-950 dark:text-zinc-50"><%= l(date) %></h2>
+
+          <div class="grid gap-4 md:grid-cols-2">
+            <% sessions.each do |session| %>
+              <article class="rounded-lg border border-zinc-200 dark:border-zinc-800/80 bg-white dark:bg-zinc-900/70 p-5">
+                <p class="inline-flex rounded-md bg-zinc-50 dark:bg-zinc-950/70 px-2.5 py-1 text-xs font-medium text-zinc-700 dark:text-zinc-300"><%= session_time_and_room(session) %></p>
+                <h3 class="mt-2 text-lg font-semibold"><%= link_to session.title, conference_session_path(@conference, session), class: "hover:text-emerald-600 dark:hover:text-emerald-300" %></h3>
+                <p class="mt-1 text-sm text-zinc-600 dark:text-zinc-400"><%= session.speaker_name %></p>
+                <div class="mt-4">
+                  <%= link_to "感想を送る", public_feedback_path(@conference, session), class: "rounded-md bg-emerald-400 px-3 py-2 text-sm font-semibold text-zinc-950 hover:bg-emerald-300" %>
+                </div>
+              </article>
+            <% end %>
           </div>
-        </article>
+        </section>
       <% end %>
     </div>
   <% else %>

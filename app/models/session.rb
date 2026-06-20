@@ -9,6 +9,7 @@ class Session < ApplicationRecord
   validates :title, :speaker_name, :starts_at, :ends_at, presence: true
   validates :slug, presence: true, uniqueness: { scope: :conference_id }, format: { with: SlugNormalizer::FORMAT }
   validate :ends_at_after_starts_at
+  validate :ends_at_on_same_date
   validate :scheduled_within_conference_dates
   validate :slide_deck_must_be_pdf
 
@@ -57,6 +58,12 @@ class Session < ApplicationRecord
     return if starts_at.blank? || ends_at.blank?
 
     errors.add(:ends_at, "は開始時刻より後にしてください") if ends_at <= starts_at
+  end
+
+  def ends_at_on_same_date
+    return if starts_at.blank? || ends_at.blank?
+
+    errors.add(:ends_at, "は開始日と同じ日付にしてください") if ends_at.to_date != starts_at.to_date
   end
 
   def scheduled_within_conference_dates

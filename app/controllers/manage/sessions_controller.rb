@@ -63,6 +63,7 @@ class Manage::SessionsController < ApplicationController
       :speaker_name,
       :speaker_user_id,
       :room,
+      :scheduled_on,
       :starts_on,
       :starts_time,
       :starts_at,
@@ -73,17 +74,19 @@ class Manage::SessionsController < ApplicationController
       :slide_deck
     ).tap do |permitted|
       permitted[:speaker_user_id] = nil if permitted[:speaker_user_id].blank?
-      assign_session_datetime(permitted, :starts_at, :starts_on, :starts_time)
-      assign_session_datetime(permitted, :ends_at, :ends_on, :ends_time)
+      assign_session_datetimes(permitted)
     end
   end
 
-  def assign_session_datetime(attributes, datetime_key, date_key, time_key)
-    date_value = attributes.delete(date_key)
-    time_value = attributes.delete(time_key)
-    return if date_value.blank? && time_value.blank?
+  def assign_session_datetimes(attributes)
+    date_value = attributes.delete(:scheduled_on).presence || attributes.delete(:starts_on)
+    attributes.delete(:ends_on)
+    starts_time = attributes.delete(:starts_time)
+    ends_time = attributes.delete(:ends_time)
+    return if date_value.blank? && starts_time.blank? && ends_time.blank?
 
-    attributes[datetime_key] = parse_session_datetime(date_value, time_value)
+    attributes[:starts_at] = parse_session_datetime(date_value, starts_time)
+    attributes[:ends_at] = parse_session_datetime(date_value, ends_time)
   end
 
   def parse_session_datetime(date_value, time_value)

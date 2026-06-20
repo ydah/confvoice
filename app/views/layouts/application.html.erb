@@ -6,6 +6,13 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="application-name" content="Confvoice">
     <meta name="mobile-web-app-capable" content="yes">
+    <%= render "shared/social_meta",
+          title: content_for?(:og_title) ? content_for(:og_title) : t("app.name"),
+          description: content_for?(:og_description) ? content_for(:og_description) : t("pages.home.lead"),
+          url: request.original_url,
+          image_url: default_og_image_url,
+          image_type: ApplicationHelper::DEFAULT_OG_IMAGE_TYPE,
+          image_alt: default_og_image_alt %>
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
@@ -14,9 +21,8 @@
     <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
     <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
 
-    <link rel="icon" href="/icon.png" type="image/png">
-    <link rel="icon" href="/icon.svg" type="image/svg+xml">
-    <link rel="apple-touch-icon" href="/icon.png">
+    <%= favicon_link_tag "/favicon.ico" %>
+    <%= tag.link rel: "apple-touch-icon", href: "/logo.png" %>
 
     <%= render "shared/theme_boot" %>
     <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>

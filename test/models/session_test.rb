@@ -72,6 +72,19 @@ class SessionTest < ActiveSupport::TestCase
     assert_includes session.errors[:ends_at], "はカンファレンスの日程から選んでください"
   end
 
+  test "終了日は開始日と同じ日付であること" do
+    conference = create(:conference, starts_on: Date.new(2026, 6, 20), ends_on: Date.new(2026, 6, 21))
+    session = build(
+      :session,
+      conference: conference,
+      starts_at: Time.zone.local(2026, 6, 20, 23, 30),
+      ends_at: Time.zone.local(2026, 6, 21, 0, 10)
+    )
+
+    assert_not session.valid?
+    assert_includes session.errors[:ends_at], "は開始日と同じ日付にしてください"
+  end
+
   test "PDFスライドを添付できること" do
     session = build(:session)
     session.slide_deck.attach(
