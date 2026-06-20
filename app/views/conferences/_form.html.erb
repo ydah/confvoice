@@ -33,22 +33,24 @@
     公開する
   </label>
 
-  <div class="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950/60 p-4">
-    <%= form.label :ogp_image, "OGP画像", class: "block text-sm font-semibold text-zinc-950 dark:text-zinc-50" %>
-    <p class="mt-1 text-sm leading-6 text-zinc-600 dark:text-zinc-400">SNS共有と公開ページのビジュアルに使います。推奨サイズは1200x630px、PNG/JPEG/WebP、5MB以下です。</p>
+  <% if ogp_image_upload_enabled? %>
+    <div class="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950/60 p-4">
+      <%= form.label :ogp_image, "OGP画像", class: "block text-sm font-semibold text-zinc-950 dark:text-zinc-50" %>
+      <p class="mt-1 text-sm leading-6 text-zinc-600 dark:text-zinc-400">SNS共有と公開ページのビジュアルに使います。推奨サイズは1200x630px、PNG/JPEG/WebP、5MB以下です。</p>
 
-    <% if conference.ogp_image.attached? %>
-      <div class="mt-4 overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
-        <%= image_tag conference.ogp_image, alt: conference_og_image_alt(conference), class: "aspect-[1200/630] w-full object-cover" %>
-      </div>
-      <label class="mt-3 flex items-center gap-3 text-sm font-medium text-zinc-700 dark:text-zinc-300">
-        <%= form.check_box :remove_ogp_image, class: "size-4 rounded border-zinc-300 dark:border-zinc-700 text-emerald-600 dark:text-emerald-300 focus:ring-emerald-600" %>
-        現在のOGP画像を削除する
-      </label>
-    <% end %>
+      <% if conference.ogp_image.attached? %>
+        <div class="mt-4 overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
+          <%= image_tag conference.ogp_image, alt: conference_og_image_alt(conference), class: "aspect-[1200/630] w-full object-cover" %>
+        </div>
+        <label class="mt-3 flex items-center gap-3 text-sm font-medium text-zinc-700 dark:text-zinc-300">
+          <%= form.check_box :remove_ogp_image, class: "size-4 rounded border-zinc-300 dark:border-zinc-700 text-emerald-600 dark:text-emerald-300 focus:ring-emerald-600" %>
+          現在のOGP画像を削除する
+        </label>
+      <% end %>
 
-    <%= form.file_field :ogp_image, accept: "image/png,image/jpeg,image/webp", class: "mt-4 w-full rounded-md border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2 text-sm file:mr-4 file:rounded-md file:border-0 file:bg-zinc-100 dark:file:bg-zinc-100 file:px-3 file:py-2 file:text-sm file:font-semibold file:text-zinc-950 dark:file:text-white focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" %>
-  </div>
+      <%= form.file_field :ogp_image, accept: "image/png,image/jpeg,image/webp", class: "mt-4 w-full rounded-md border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2 text-sm file:mr-4 file:rounded-md file:border-0 file:bg-zinc-100 dark:file:bg-zinc-100 file:px-3 file:py-2 file:text-sm file:font-semibold file:text-zinc-950 dark:file:text-white focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" %>
+    </div>
+  <% end %>
 
   <div class="flex flex-wrap gap-3">
     <%= form.submit "保存", class: "rounded-md bg-zinc-100 px-4 py-3 text-sm font-semibold text-zinc-950 hover:bg-white" %>

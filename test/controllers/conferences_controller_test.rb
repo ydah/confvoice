@@ -104,4 +104,51 @@ class ConferencesControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to conference_path(conference)
     assert_not conference.reload.ogp_image.attached?
   end
+
+  test "OGP画像登録を停止している場合はフォームに画像入力を表示しないこと" do
+    user = create(:user, :organizer)
+    conference = create(:conference)
+    create(:conference_membership, user: user, conference: conference, role: :organizer)
+
+    sign_in_as(user)
+
+    with_env("CONFVOICE_OGP_IMAGE_UPLOAD_ENABLED" => "false") do
+      get edit_conference_path(conference)
+    end
+
+    assert_response :success
+    assert_select "input[type=file][name=?]", "conference[ogp_image]", count: 0
+  end
+
+  test "OGP画像登録を停止している場合は直接POSTされても添付しないこと" do
+    user = create(:user, :organizer)
+    conference = create(:conference)
+    create(:conference_membership, user: user, conference: conference, role: :organizer)
+
+    sign_in_as(user)
+
+    with_env("CONFVOICE_OGP_IMAGE_UPLOAD_ENABLED" => "false") do
+      patch conference_path(conference), params: {
+        conference: {
+          ogp_image: fixture_file_upload("sample.png", "image/png")
+        }
+      }
+    end
+
+    assert_redirected_to conference_path(conference)
+    assert_not conference.reload.ogp_image.attached?
+  end
+
+  private
+
+  def with_env(values)
+    previous = values.to_h { |key, _value| [key, ENV[key]] }
+    values.each { |key, value| ENV[key] = value }
+
+    yield
+  ensure
+    previous.each do |key, value|
+      value.nil? ? ENV.delete(key) : ENV[key] = value
+    end
+  end
 end

@@ -68,7 +68,10 @@ class ConferencesController < ApplicationController
   end
 
   def conference_params
-    params.require(:conference).permit(:name, :description, :venue, :starts_on, :ends_on, :published, :ogp_image, :remove_ogp_image)
+    permitted_attributes = [:name, :description, :venue, :starts_on, :ends_on, :published]
+    permitted_attributes += [:ogp_image, :remove_ogp_image] if ogp_image_upload_enabled?
+
+    params.require(:conference).permit(permitted_attributes)
   end
 
   def remove_ogp_image?(attributes)

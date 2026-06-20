@@ -27,6 +27,8 @@ services:
         fromDatabase:
           name: confvoice-db
           property: connectionString
+      - key: CONFVOICE_OGP_IMAGE_UPLOAD_ENABLED
+        value: "false"
       - key: SOLID_QUEUE_IN_PUMA
         value: "true"
       - key: SOLID_QUEUE_THREADS

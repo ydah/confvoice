@@ -48,6 +48,7 @@ Common optional settings:
 - `RAILS_ASSUME_SSL`
 - `RAILS_FORCE_SSL`
 - `CONFVOICE_SELF_REGISTRATION_ENABLED`
+- `CONFVOICE_OGP_IMAGE_UPLOAD_ENABLED`
 
 ## Features
 
@@ -91,9 +92,9 @@ Deploy steps:
 
 On Render, the app uses `RENDER_EXTERNAL_HOSTNAME` automatically for host authorization and mailer URLs. If you add a custom domain, set `APP_HOST` to that domain in the web service environment variables.
 
-The Docker entrypoint runs `bin/rails db:prepare` before starting the Rails server, so the initial deploy and later migrations are applied at boot. For higher-traffic production use, move migrations to a paid Render pre-deploy command instead of running them during boot.
+`CONFVOICE_OGP_IMAGE_UPLOAD_ENABLED` defaults to `false` in production. Keep it disabled on Render's free plan because the service filesystem is ephemeral. If you later configure durable Active Storage storage, set it to `true` to show the OGP image upload controls.
 
-`ACTIVE_STORAGE_SERVICE` defaults to `local`. Render service filesystems are ephemeral, so configure an external Active Storage service before relying on uploaded PDF attachments in production.
+The Docker entrypoint runs `bin/rails db:prepare` before starting the Rails server, so the initial deploy and later migrations are applied at boot. For higher-traffic production use, move migrations to a paid Render pre-deploy command instead of running them during boot.
 
 ### Kamal
 

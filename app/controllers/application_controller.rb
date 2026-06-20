@@ -8,7 +8,7 @@ class ApplicationController < ActionController::Base
   before_action :set_locale
   before_action :require_authentication
 
-  helper_method :current_user, :authenticated?, :organizer_for?, :member_of?, :current_locale, :self_registration_enabled?
+  helper_method :current_user, :authenticated?, :organizer_for?, :member_of?, :current_locale, :self_registration_enabled?, :ogp_image_upload_enabled?
 
   private
 
@@ -75,5 +75,11 @@ class ApplicationController < ActionController::Base
     default = Rails.env.production? ? "false" : "true"
 
     ActiveModel::Type::Boolean.new.cast(ENV.fetch("CONFVOICE_SELF_REGISTRATION_ENABLED", default))
+  end
+
+  def ogp_image_upload_enabled?
+    default = Rails.env.production? ? "false" : "true"
+
+    ActiveModel::Type::Boolean.new.cast(ENV.fetch("CONFVOICE_OGP_IMAGE_UPLOAD_ENABLED", default))
   end
 end
