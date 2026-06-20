@@ -9,6 +9,7 @@ class Session < ApplicationRecord
   validates :title, :speaker_name, :starts_at, :ends_at, presence: true
   validates :slug, presence: true, uniqueness: { scope: :conference_id }, format: { with: SlugNormalizer::FORMAT }
   validate :ends_at_after_starts_at
+  validate :scheduled_within_conference_dates
   validate :slide_deck_must_be_pdf
 
   before_validation :generate_slug, on: :create
@@ -56,6 +57,14 @@ class Session < ApplicationRecord
     return if starts_at.blank? || ends_at.blank?
 
     errors.add(:ends_at, "は開始時刻より後にしてください") if ends_at <= starts_at
+  end
+
+  def scheduled_within_conference_dates
+    return if conference.blank? || conference.starts_on.blank? || conference.ends_on.blank?
+
+    conference_dates = conference.starts_on..conference.ends_on
+    errors.add(:starts_at, "はカンファレンスの日程から選んでください") if starts_at.present? && !conference_dates.cover?(starts_at.to_date)
+    errors.add(:ends_at, "はカンファレンスの日程から選んでください") if ends_at.present? && !conference_dates.cover?(ends_at.to_date)
   end
 
   def slide_deck_must_be_pdf

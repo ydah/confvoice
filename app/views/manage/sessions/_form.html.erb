@@ -1,4 +1,7 @@
 <% action_url = session_record.persisted? ? conference_manage_session_path(conference, session_record) : conference_manage_sessions_path(conference) %>
+<% session_date_options = (conference.starts_on..conference.ends_on).map { |date| [l(date), date.iso8601] } %>
+<% selected_starts_on = (session_record.starts_at&.to_date || conference.starts_on).iso8601 %>
+<% selected_ends_on = (session_record.ends_at&.to_date || session_record.starts_at&.to_date || conference.starts_on).iso8601 %>
 
 <%= form_with model: session_record, url: action_url, class: "space-y-5" do |form| %>
   <%= render "shared/errors", resource: session_record %>
@@ -29,14 +32,22 @@
     <%= form.text_field :room, class: "mt-2 w-full rounded-md border border-zinc-300 dark:border-zinc-700 px-3 py-2 focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" %>
   </div>
 
-  <div class="grid gap-5 md:grid-cols-2">
+  <div class="grid gap-5 md:grid-cols-4">
     <div>
-      <%= form.label :starts_at, "開始時刻", class: "block text-sm font-medium text-zinc-700 dark:text-zinc-300" %>
-      <%= form.datetime_field :starts_at, required: true, class: "mt-2 w-full rounded-md border border-zinc-300 dark:border-zinc-700 px-3 py-2 focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" %>
+      <%= label_tag "session_starts_on", "開始日", class: "block text-sm font-medium text-zinc-700 dark:text-zinc-300" %>
+      <%= select_tag "session[starts_on]", options_for_select(session_date_options, selected_starts_on), id: "session_starts_on", required: true, class: "mt-2 w-full rounded-md border border-zinc-300 dark:border-zinc-700 px-3 py-2 focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" %>
     </div>
     <div>
-      <%= form.label :ends_at, "終了時刻", class: "block text-sm font-medium text-zinc-700 dark:text-zinc-300" %>
-      <%= form.datetime_field :ends_at, required: true, class: "mt-2 w-full rounded-md border border-zinc-300 dark:border-zinc-700 px-3 py-2 focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" %>
+      <%= label_tag "session_starts_time", "開始時刻", class: "block text-sm font-medium text-zinc-700 dark:text-zinc-300" %>
+      <%= time_field_tag "session[starts_time]", session_record.starts_at&.strftime("%H:%M"), id: "session_starts_time", required: true, class: "mt-2 w-full rounded-md border border-zinc-300 dark:border-zinc-700 px-3 py-2 focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" %>
+    </div>
+    <div>
+      <%= label_tag "session_ends_on", "終了日", class: "block text-sm font-medium text-zinc-700 dark:text-zinc-300" %>
+      <%= select_tag "session[ends_on]", options_for_select(session_date_options, selected_ends_on), id: "session_ends_on", required: true, class: "mt-2 w-full rounded-md border border-zinc-300 dark:border-zinc-700 px-3 py-2 focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" %>
+    </div>
+    <div>
+      <%= label_tag "session_ends_time", "終了時刻", class: "block text-sm font-medium text-zinc-700 dark:text-zinc-300" %>
+      <%= time_field_tag "session[ends_time]", session_record.ends_at&.strftime("%H:%M"), id: "session_ends_time", required: true, class: "mt-2 w-full rounded-md border border-zinc-300 dark:border-zinc-700 px-3 py-2 focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" %>
     </div>
   </div>
 

@@ -46,6 +46,32 @@ class SessionTest < ActiveSupport::TestCase
     assert_not duplicate.valid?
   end
 
+  test "開始日はカンファレンス日程内であること" do
+    conference = create(:conference, starts_on: Date.new(2026, 6, 20), ends_on: Date.new(2026, 6, 21))
+    session = build(
+      :session,
+      conference: conference,
+      starts_at: Time.zone.local(2026, 6, 19, 10, 0),
+      ends_at: Time.zone.local(2026, 6, 20, 11, 0)
+    )
+
+    assert_not session.valid?
+    assert_includes session.errors[:starts_at], "はカンファレンスの日程から選んでください"
+  end
+
+  test "終了日はカンファレンス日程内であること" do
+    conference = create(:conference, starts_on: Date.new(2026, 6, 20), ends_on: Date.new(2026, 6, 21))
+    session = build(
+      :session,
+      conference: conference,
+      starts_at: Time.zone.local(2026, 6, 21, 10, 0),
+      ends_at: Time.zone.local(2026, 6, 22, 11, 0)
+    )
+
+    assert_not session.valid?
+    assert_includes session.errors[:ends_at], "はカンファレンスの日程から選んでください"
+  end
+
   test "PDFスライドを添付できること" do
     session = build(:session)
     session.slide_deck.attach(

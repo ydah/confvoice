@@ -63,12 +63,38 @@ class Manage::SessionsController < ApplicationController
       :speaker_name,
       :speaker_user_id,
       :room,
+      :starts_on,
+      :starts_time,
       :starts_at,
+      :ends_on,
+      :ends_time,
       :ends_at,
       :feedback_open,
       :slide_deck
     ).tap do |permitted|
       permitted[:speaker_user_id] = nil if permitted[:speaker_user_id].blank?
+      assign_session_datetime(permitted, :starts_at, :starts_on, :starts_time)
+      assign_session_datetime(permitted, :ends_at, :ends_on, :ends_time)
     end
+  end
+
+  def assign_session_datetime(attributes, datetime_key, date_key, time_key)
+    date_value = attributes.delete(date_key)
+    time_value = attributes.delete(time_key)
+    return if date_value.blank? && time_value.blank?
+
+    attributes[datetime_key] = parse_session_datetime(date_value, time_value)
+  end
+
+  def parse_session_datetime(date_value, time_value)
+    return if date_value.blank? || time_value.blank?
+
+    date = Date.iso8601(date_value.to_s)
+    time = time_value.to_s.match(/\A(?<hour>[01]\d|2[0-3]):(?<minute>[0-5]\d)\z/)
+    return unless time
+
+    Time.zone.local(date.year, date.month, date.day, time[:hour].to_i, time[:minute].to_i)
+  rescue ArgumentError
+    nil
   end
 end
