@@ -20,7 +20,7 @@ ja:
     home:
       eyebrow: "Conference feedback"
       headline: "ConfVoice"
-      lead: "セッションごとの感想を QR コードからすばやく集め、主催者が確認した感想だけを登壇者に共有できます。"
+      lead: "セッションごとの感想を QR コードからすばやく集めることができます。"
       dashboard: "管理画面へ"
       login: "ログイン"
       register: "主催者登録"
