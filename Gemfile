@@ -24,7 +24,7 @@ gem "bcrypt", "~> 3.1.7"
 gem "rqrcode", "~> 3.2"
 
 # Dashboard charts and grouped time-series data
-gem "chartkick", "~> 5.1"
+gem "chartkick", "~> 5.3"
 gem "groupdate", "~> 6.5"
 
 # Feedback submission throttling
