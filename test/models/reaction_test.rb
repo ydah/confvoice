@@ -1,20 +1,20 @@
 require "test_helper"
 
 class ReactionTest < ActiveSupport::TestCase
-  test "有効なリアクションを保存できること" do
+  test "accepts valid reactions" do
     reaction = build(:reaction)
 
     assert reaction.valid?
   end
 
-  test "同一セッションに同一トークンで同じリアクションは重複できないこと" do
+  test "rejects duplicate reactions with the same session and respondent token" do
     existing = create(:reaction)
     duplicate = build(:reaction, session: existing.session, kind: existing.kind, respondent_token: existing.respondent_token)
 
     assert_not duplicate.valid?
   end
 
-  test "受付終了セッションにはリアクションできないこと" do
+  test "rejects reactions for sessions with closed submissions" do
     session = create(:session, feedback_open: false)
     reaction = build(:reaction, session: session)
 

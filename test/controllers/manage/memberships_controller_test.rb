@@ -1,7 +1,7 @@
 require "test_helper"
 
 class Manage::MembershipsControllerTest < ActionDispatch::IntegrationTest
-  test "Organizer は speaker メンバーを追加できること" do
+  test "organizers can add speaker members" do
     organizer = create(:user, :organizer)
     conference = create(:conference)
     create(:conference_membership, user: organizer, conference: conference, role: :organizer)

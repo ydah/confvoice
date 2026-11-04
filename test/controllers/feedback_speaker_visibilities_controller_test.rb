@@ -1,7 +1,7 @@
 require "test_helper"
 
 class FeedbackSpeakerVisibilitiesControllerTest < ActionDispatch::IntegrationTest
-  test "主催者は感想を登壇者に共有できること" do
+  test "organizers can share feedback with speakers" do
     user = create(:user, :organizer)
     conference = create(:conference)
     session = create(:session, conference: conference)
@@ -15,7 +15,7 @@ class FeedbackSpeakerVisibilitiesControllerTest < ActionDispatch::IntegrationTes
     assert feedback.reload.speaker_visible?
   end
 
-  test "主催者は感想の登壇者共有を解除できること" do
+  test "organizers can stop sharing feedback with speakers" do
     user = create(:user, :organizer)
     conference = create(:conference)
     session = create(:session, conference: conference)
@@ -29,7 +29,7 @@ class FeedbackSpeakerVisibilitiesControllerTest < ActionDispatch::IntegrationTes
     assert_not feedback.reload.speaker_visible?
   end
 
-  test "主催者以外は感想を登壇者に共有できないこと" do
+  test "non-organizers cannot share feedback with speakers" do
     user = create(:user)
     conference = create(:conference)
     session = create(:session, conference: conference)

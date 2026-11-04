@@ -1,19 +1,19 @@
 require "test_helper"
 
 class PublicConferencesControllerTest < ActionDispatch::IntegrationTest
-  test "公開カンファレンスのトーク一覧を未ログインで閲覧できること" do
+  test "unauthenticated users can view the talk list for a published conference" do
     conference = create(:conference)
-    session = create(:session, conference: conference, title: "公開トーク")
+    session = create(:session, conference: conference, title: "Public Talk")
 
     get public_conference_path(conference)
 
     assert_response :success
     assert_select "h1", conference.name
-    assert_select "h4", "公開トーク"
+    assert_select "h4", "Public Talk"
     assert_select "a[href=?]", public_feedback_path(conference, session), text: "Write feedback"
   end
 
-  test "セッション一覧は日付ごとに時刻だけを表示し会場未設定なら表示しないこと" do
+  test "groups sessions by date and displays times without a room when none is set" do
     conference = create(:conference, venue: nil, starts_on: Date.new(2026, 7, 18), ends_on: Date.new(2026, 7, 19))
     session = create(
       :session,
@@ -31,11 +31,11 @@ class PublicConferencesControllerTest < ActionDispatch::IntegrationTest
     assert_select "h4", "Opening Talk"
     assert_includes response.body, "10:10 - 10:40"
     assert_no_match "07/18 10:10 - 07/18 10:40", response.body
-    assert_no_match "会場未定", response.body
+    assert_no_match "Room TBD", response.body
     assert_select "a[href=?]", public_feedback_path(conference, session), text: "Write feedback"
   end
 
-  test "感想受付終了トークは受付終了として表示すること" do
+  test "marks talks with closed feedback submissions as closed" do
     conference = create(:conference)
     session = create(:session, conference: conference, feedback_open: false)
 
@@ -46,7 +46,7 @@ class PublicConferencesControllerTest < ActionDispatch::IntegrationTest
     assert_select "a[href=?]", public_feedback_path(conference, session), count: 0
   end
 
-  test "公開ページはデフォルトOGP画像をmetaに反映すること" do
+  test "uses the default OGP image in public page metadata" do
     conference = create(:conference, name: "RubyKaigi 2026")
 
     get public_conference_path(conference)
@@ -66,7 +66,7 @@ class PublicConferencesControllerTest < ActionDispatch::IntegrationTest
     assert_select "meta[name='twitter:image:alt'][content=?]", "RubyKaigi 2026 social preview image"
   end
 
-  test "OGP画像が登録されている場合もmetaはデフォルト画像を使いビジュアルには反映されること" do
+  test "displays uploaded OGP images while keeping the default image in metadata" do
     conference = create(:conference, name: "RubyKaigi 2026")
     conference.ogp_image.attach(
       io: StringIO.new("image"),

@@ -1,9 +1,9 @@
 FactoryBot.define do
   factory :feedback do
     session
-    respondent_name { "山田 太郎" }
+    respondent_name { "Alex Smith" }
     rating { 5 }
-    body { "とても良かったです" }
+    body { "Great session" }
     sequence(:respondent_token) { |number| "token-#{number}" }
 
     trait :visible_to_speaker do

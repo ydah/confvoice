@@ -1,25 +1,25 @@
 require "test_helper"
 
 class SessionTest < ActiveSupport::TestCase
-  test "slugはタイトルから自動生成されること" do
+  test "generates a slug from a title containing English and Japanese text" do
     session = create(:session, title: "Keynote: Ruby の未来", slug: nil)
 
     assert_equal "keynote-ruby-の未来", session.slug
   end
 
-  test "日本語タイトルは日本語slugとして自動生成されること" do
+  test "generates a Japanese slug from a Japanese title" do
     session = create(:session, title: "パフォーマンスチューニング", slug: nil)
 
     assert_equal "パフォーマンスチューニング", session.slug
   end
 
-  test "日本語slugも有効であること" do
+  test "accepts Japanese slugs" do
     session = build(:session, slug: "日本語-slug-123")
 
     assert session.valid?
   end
 
-  test "同じタイトルのslugはカンファレンス内で連番になること" do
+  test "numbers duplicate title slugs within the same conference" do
     conference = create(:conference)
     create(:session, conference: conference, title: "Keynote: Ruby の未来", slug: nil)
     session = create(:session, conference: conference, title: "Keynote: Ruby の未来", slug: nil)
@@ -27,7 +27,7 @@ class SessionTest < ActiveSupport::TestCase
     assert_equal "keynote-ruby-の未来-2", session.slug
   end
 
-  test "タイトルを変更しても既存slugは維持されること" do
+  test "preserves the existing slug when the title changes" do
     session = create(:session, title: "Original Talk", slug: nil)
 
     assert_no_changes -> { session.reload.slug } do
@@ -35,7 +35,7 @@ class SessionTest < ActiveSupport::TestCase
     end
   end
 
-  test "slugはカンファレンス内で一意であればよいこと" do
+  test "requires slugs to be unique only within a conference" do
     first = create(:session, slug: "keynote-ruby")
     second = build(:session, slug: "keynote-ruby")
 
@@ -46,7 +46,7 @@ class SessionTest < ActiveSupport::TestCase
     assert_not duplicate.valid?
   end
 
-  test "開始日はカンファレンス日程内であること" do
+  test "requires the start date to fall within the conference dates" do
     conference = create(:conference, starts_on: Date.new(2026, 6, 20), ends_on: Date.new(2026, 6, 21))
     session = build(
       :session,
@@ -59,7 +59,7 @@ class SessionTest < ActiveSupport::TestCase
     assert_includes session.errors[:starts_at], "must be within the conference dates"
   end
 
-  test "終了日はカンファレンス日程内であること" do
+  test "requires the end date to fall within the conference dates" do
     conference = create(:conference, starts_on: Date.new(2026, 6, 20), ends_on: Date.new(2026, 6, 21))
     session = build(
       :session,
@@ -72,7 +72,7 @@ class SessionTest < ActiveSupport::TestCase
     assert_includes session.errors[:ends_at], "must be within the conference dates"
   end
 
-  test "終了日は開始日と同じ日付であること" do
+  test "requires the session to start and end on the same date" do
     conference = create(:conference, starts_on: Date.new(2026, 6, 20), ends_on: Date.new(2026, 6, 21))
     session = build(
       :session,
@@ -85,7 +85,7 @@ class SessionTest < ActiveSupport::TestCase
     assert_includes session.errors[:ends_at], "must be on the same date as the start time"
   end
 
-  test "PDFスライドを添付できること" do
+  test "accepts PDF slide attachments" do
     session = build(:session)
     session.slide_deck.attach(
       io: File.open(Rails.root.join("test/fixtures/files/sample.pdf")),
@@ -96,7 +96,7 @@ class SessionTest < ActiveSupport::TestCase
     assert session.valid?
   end
 
-  test "PDF以外のスライド添付は無効" do
+  test "rejects non-PDF slide attachments" do
     session = build(:session)
     session.slide_deck.attach(
       io: StringIO.new("not a pdf"),

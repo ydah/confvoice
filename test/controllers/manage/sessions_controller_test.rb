@@ -1,7 +1,7 @@
 require "test_helper"
 
 class Manage::SessionsControllerTest < ActionDispatch::IntegrationTest
-  test "セッションフォームの日付はカンファレンス日程から選べること" do
+  test "limits session date choices to the conference dates" do
     user = create(:user, :organizer)
     conference = create(:conference, starts_on: Date.new(2026, 6, 20), ends_on: Date.new(2026, 6, 22))
     create(:conference_membership, user: user, conference: conference, role: :organizer)
@@ -21,7 +21,7 @@ class Manage::SessionsControllerTest < ActionDispatch::IntegrationTest
     assert_select "input[type=time][name=?]", "session[starts_time]"
   end
 
-  test "主催者が作成するセッションのslugはタイトルから自動生成されること" do
+  test "generates a slug from the title when an organizer creates a session" do
     user = create(:user, :organizer)
     conference = create(:conference)
     create(:conference_membership, user: user, conference: conference, role: :organizer)
@@ -29,8 +29,8 @@ class Manage::SessionsControllerTest < ActionDispatch::IntegrationTest
     sign_in_as(user)
     post conference_manage_sessions_path(conference), params: {
       session: {
-        title: "Keynote: Ruby の未来",
-        description: "基調講演",
+        title: "Keynote: The Future of Ruby",
+        description: "Keynote",
         speaker_name: "Matz",
         room: "Main Hall",
         starts_at: conference.starts_on.in_time_zone.change(hour: 10),
@@ -41,10 +41,10 @@ class Manage::SessionsControllerTest < ActionDispatch::IntegrationTest
     }
 
     assert_redirected_to conference_manage_sessions_path(conference)
-    assert_equal "keynote-ruby-の未来", conference.sessions.order(:created_at).last.slug
+    assert_equal "keynote-the-future-of-ruby", conference.sessions.order(:created_at).last.slug
   end
 
-  test "主催者はカンファレンス日程から選んだ日付と時刻でセッションを作成できること" do
+  test "organizers can create sessions with a date and time within the conference schedule" do
     user = create(:user, :organizer)
     conference = create(:conference, starts_on: Date.new(2026, 6, 20), ends_on: Date.new(2026, 6, 21))
     create(:conference_membership, user: user, conference: conference, role: :organizer)
@@ -52,8 +52,8 @@ class Manage::SessionsControllerTest < ActionDispatch::IntegrationTest
     sign_in_as(user)
     post conference_manage_sessions_path(conference), params: {
       session: {
-        title: "Keynote: Ruby の未来",
-        description: "基調講演",
+        title: "Keynote: The Future of Ruby",
+        description: "Keynote",
         speaker_name: "Matz",
         room: "Main Hall",
         scheduled_on: "2026-06-20",
