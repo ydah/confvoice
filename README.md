@@ -65,7 +65,7 @@ Common optional settings:
 - QR code pages for sessions
 - Organizer dashboard with charts, reaction counts, and feedback keywords
 - Speaker invite links with a read-only live portal
-- CSV export with UTF-8 BOM for Excel
+- Conference-wide or per-speaker CSV export with UTF-8 BOM for Excel (sessions with the same speaker name are grouped within a conference)
 - PDF slide attachment per session
 - English interface
 - Rack::Attack rate limits

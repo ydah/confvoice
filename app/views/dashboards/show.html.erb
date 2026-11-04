@@ -13,6 +13,16 @@
     </div>
   </div>
 
+  <% if @sessions.any? %>
+    <%= form_with url: conference_export_path(@conference, format: :csv), method: :get, data: { turbo: false }, class: "flex flex-wrap items-end gap-3" do |form| %>
+      <div>
+        <%= form.label :speaker_name, t("ui.sessions.speaker_name"), class: "form-label" %>
+        <%= form.select :speaker_name, @sessions.map(&:speaker_name).uniq.sort, { prompt: t("ui.feedbacks.select_speaker") }, required: true, class: "form-input" %>
+      </div>
+      <%= form.submit t("ui.feedbacks.export_speaker_csv"), class: "button-secondary" %>
+    <% end %>
+  <% end %>
+
   <section class="stats-summary">
     <div class="stat-card">
       <p class="text-sm font-medium text-zinc-500 dark:text-zinc-400"><%= t("ui.dashboard.feedback_count") %></p>

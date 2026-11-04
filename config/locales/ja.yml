@@ -104,6 +104,8 @@ ja:
       title: "%{session} の感想"
       moderation_help: "登壇者には共有中の感想だけが表示されます。新しい投稿はまず主催者だけに表示されます。"
       export_csv: "CSV出力"
+      export_speaker_csv: "登壇者のCSV出力"
+      select_speaker: "登壇者を選択"
       empty: "まだ感想はありません。"
       unnamed: "名前未入力"
       rating_label: "評価 %{rating}"
