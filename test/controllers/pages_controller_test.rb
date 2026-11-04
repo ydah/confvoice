@@ -1,7 +1,7 @@
 require "test_helper"
 
 class PagesControllerTest < ActionDispatch::IntegrationTest
-  test "ホームにデフォルトOGP画像とX向けmetaを表示すること" do
+  test "renders the default OGP image and X metadata on the home page" do
     get root_path
 
     default_og_image_url = "http://www.example.com/ogp.png"
@@ -19,14 +19,14 @@ class PagesControllerTest < ActionDispatch::IntegrationTest
     assert_select "meta[name='twitter:image:alt'][content=?]", "ConfVoice social preview image"
   end
 
-  test "ヘッダーロゴを固定サイズで表示すること" do
+  test "renders the header logo at a fixed size" do
     get root_path
 
     assert_response :success
     assert_select "header img[src='/logo.png'][width='32'][height='32']", count: 1
   end
 
-  test "英語をデフォルト表示にし管理画面導線を維持すること" do
+  test "defaults to English and preserves organizer navigation" do
     user = create(:user, :organizer)
 
     sign_in_as(user)
@@ -39,7 +39,7 @@ class PagesControllerTest < ActionDispatch::IntegrationTest
     assert_select "a[hreflang]", count: 0
   end
 
-  test "以前の日本語ロケール指定が残っていても英語で表示すること" do
+  test "renders in English despite a previously selected Japanese locale" do
     cookies[:locale] = "ja"
 
     I18n.with_locale(:ja) do
@@ -48,6 +48,6 @@ class PagesControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select "h1", text: "Conferences"
-    assert_no_match "声が届く", response.body
+    assert_no_match I18n.t("ui.conferences.title", locale: :ja), response.body
   end
 end

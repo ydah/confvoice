@@ -1,7 +1,7 @@
 require "test_helper"
 
 class FeedbacksControllerTest < ActionDispatch::IntegrationTest
-  test "主催者は感想一覧で登壇者共有状態を操作できること" do
+  test "organizers can manage speaker sharing from the feedback list" do
     user = create(:user, :organizer)
     conference = create(:conference)
     session = create(:session, conference: conference)
@@ -18,11 +18,11 @@ class FeedbacksControllerTest < ActionDispatch::IntegrationTest
     assert_select "a[href=?][data-turbo=false]", conference_export_path(conference, format: :csv, speaker_name: session.speaker_name), text: "Export speaker CSV"
   end
 
-  test "speakerメンバーは未共有を含む感想一覧を閲覧できないこと" do
+  test "speaker members cannot view the feedback list containing unshared feedback" do
     user = create(:user)
     conference = create(:conference)
     session = create(:session, conference: conference)
-    create(:feedback, session: session, body: "主催者だけが見る感想")
+    create(:feedback, session: session, body: "Feedback for organizers only")
     create(:conference_membership, user: user, conference: conference, role: :speaker)
 
     sign_in_as(user)

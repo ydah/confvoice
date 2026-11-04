@@ -1,7 +1,7 @@
 require "test_helper"
 
 class PublicReactionsControllerTest < ActionDispatch::IntegrationTest
-  test "聴衆がリアクションできること" do
+  test "attendees can submit reactions" do
     session = create(:session)
 
     assert_difference "Reaction.count", 1 do
@@ -13,7 +13,7 @@ class PublicReactionsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to public_feedback_path(session.conference, session)
   end
 
-  test "同じリアクションは重複送信できないこと" do
+  test "rejects duplicate reaction submissions" do
     session = create(:session)
 
     post public_reactions_path(session.conference, session), params: { reaction: { kind: "idea" } }

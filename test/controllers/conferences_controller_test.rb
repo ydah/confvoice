@@ -1,7 +1,7 @@
 require "test_helper"
 
 class ConferencesControllerTest < ActionDispatch::IntegrationTest
-  test "未ログインではカンファレンス詳細にアクセスできないこと" do
+  test "unauthenticated users cannot access conference details" do
     conference = create(:conference)
 
     get conference_path(conference)
@@ -9,7 +9,7 @@ class ConferencesControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to new_session_path
   end
 
-  test "主催者はカンファレンス詳細を閲覧できること" do
+  test "organizers can view conference details" do
     user = create(:user, :organizer)
     conference = create(:conference)
     create(:conference_membership, user: user, conference: conference, role: :organizer)
@@ -20,7 +20,7 @@ class ConferencesControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
-  test "speakerメンバーは主催者向けカンファレンス詳細を閲覧できないこと" do
+  test "speaker members cannot view organizer conference details" do
     user = create(:user)
     conference = create(:conference)
     create(:conference_membership, user: user, conference: conference, role: :speaker)
@@ -31,7 +31,7 @@ class ConferencesControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to root_path
   end
 
-  test "speakerメンバーのカンファレンスは主催者一覧に表示しないこと" do
+  test "excludes conferences with speaker membership from the organizer list" do
     user = create(:user)
     organizer_conference = create(:conference, name: "Organizer Conference")
     speaker_conference = create(:conference, name: "Speaker Conference")
@@ -46,7 +46,7 @@ class ConferencesControllerTest < ActionDispatch::IntegrationTest
     assert_no_match "Speaker Conference", response.body
   end
 
-  test "作成するカンファレンスのslugは名前から自動生成されること" do
+  test "generates a new conference slug from its name" do
     user = create(:user, :organizer)
 
     sign_in_as(user)
@@ -68,7 +68,7 @@ class ConferencesControllerTest < ActionDispatch::IntegrationTest
     assert_equal "rubykaigi2026", conference.slug
   end
 
-  test "主催者はカンファレンスのOGP画像を登録できること" do
+  test "organizers can upload a conference OGP image" do
     user = create(:user, :organizer)
     conference = create(:conference)
     create(:conference_membership, user: user, conference: conference, role: :organizer)
@@ -84,7 +84,7 @@ class ConferencesControllerTest < ActionDispatch::IntegrationTest
     assert conference.reload.ogp_image.attached?
   end
 
-  test "主催者はカンファレンスのOGP画像を削除できること" do
+  test "organizers can remove a conference OGP image" do
     user = create(:user, :organizer)
     conference = create(:conference)
     conference.ogp_image.attach(
@@ -105,7 +105,7 @@ class ConferencesControllerTest < ActionDispatch::IntegrationTest
     assert_not conference.reload.ogp_image.attached?
   end
 
-  test "OGP画像登録を停止している場合はフォームに画像入力を表示しないこと" do
+  test "hides the image input when OGP image uploads are disabled" do
     user = create(:user, :organizer)
     conference = create(:conference)
     create(:conference_membership, user: user, conference: conference, role: :organizer)
@@ -120,7 +120,7 @@ class ConferencesControllerTest < ActionDispatch::IntegrationTest
     assert_select "input[type=file][name=?]", "conference[ogp_image]", count: 0
   end
 
-  test "OGP画像登録を停止している場合は直接POSTされても添付しないこと" do
+  test "rejects direct image uploads when OGP image uploads are disabled" do
     user = create(:user, :organizer)
     conference = create(:conference)
     create(:conference_membership, user: user, conference: conference, role: :organizer)

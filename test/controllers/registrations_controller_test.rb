@@ -1,7 +1,7 @@
 require "test_helper"
 
 class RegistrationsControllerTest < ActionDispatch::IntegrationTest
-  test "最初の登録ユーザーもadminにはならないこと" do
+  test "does not grant administrator privileges to the first registered user" do
     User.delete_all
 
     post registration_path, params: {
@@ -20,7 +20,7 @@ class RegistrationsControllerTest < ActionDispatch::IntegrationTest
     assert_not user.admin?
   end
 
-  test "主催者登録を停止している場合は登録できないこと" do
+  test "rejects registration when organizer self-registration is disabled" do
     with_env("CONFVOICE_SELF_REGISTRATION_ENABLED" => "false") do
       get new_registration_path
 

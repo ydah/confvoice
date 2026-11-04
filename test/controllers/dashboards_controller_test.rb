@@ -1,7 +1,7 @@
 require "test_helper"
 
 class DashboardsControllerTest < ActionDispatch::IntegrationTest
-  test "未ログインではダッシュボードにアクセスできないこと" do
+  test "unauthenticated users cannot access the dashboard" do
     conference = create(:conference)
 
     get conference_dashboard_path(conference)
@@ -9,7 +9,7 @@ class DashboardsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to new_session_path
   end
 
-  test "主催者はダッシュボードを閲覧できること" do
+  test "organizers can view the dashboard" do
     user = create(:user, :organizer)
     conference = create(:conference)
     create(:conference_membership, user: user, conference: conference, role: :organizer)
@@ -20,7 +20,7 @@ class DashboardsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
-  test "speakerメンバーはダッシュボードを閲覧できないこと" do
+  test "speaker members cannot view the dashboard" do
     user = create(:user)
     conference = create(:conference)
     create(:conference_membership, user: user, conference: conference, role: :speaker)
@@ -31,12 +31,12 @@ class DashboardsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to root_path
   end
 
-  test "カンファレンスの登壇者を重複なく選んでCSV出力できること" do
+  test "lists each conference speaker once in the CSV export selector" do
     user = create(:user, :organizer)
     conference = create(:conference)
-    create_list(:session, 2, conference: conference, speaker_name: "発表者 A")
-    create(:session, conference: conference, speaker_name: "発表者 B")
-    create(:session, speaker_name: "別イベントの登壇者")
+    create_list(:session, 2, conference: conference, speaker_name: "Speaker A")
+    create(:session, conference: conference, speaker_name: "Speaker B")
+    create(:session, speaker_name: "Speaker from another conference")
     create(:conference_membership, user: user, conference: conference, role: :organizer)
 
     sign_in_as(user)
@@ -47,9 +47,9 @@ class DashboardsControllerTest < ActionDispatch::IntegrationTest
     assert_select "form[action=?][method=get][data-turbo=false]", conference_export_path(conference, format: :csv) do
       assert_select "label[for=speaker_name]", text: "Speaker name"
       assert_select "select[name=speaker_name][required]" do
-        assert_select "option[value=?]", "発表者 A", count: 1
-        assert_select "option[value=?]", "発表者 B", count: 1
-        assert_select "option[value=?]", "別イベントの登壇者", count: 0
+        assert_select "option[value=?]", "Speaker A", count: 1
+        assert_select "option[value=?]", "Speaker B", count: 1
+        assert_select "option[value=?]", "Speaker from another conference", count: 0
       end
       assert_select "input[type=submit][value=?]", "Export speaker CSV"
     end

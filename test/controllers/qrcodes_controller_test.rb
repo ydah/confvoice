@@ -1,7 +1,7 @@
 require "test_helper"
 
 class QrcodesControllerTest < ActionDispatch::IntegrationTest
-  test "主催者は参加者向けトーク一覧QRを確認できること" do
+  test "organizers can view the QR code for the audience talk list" do
     user = create(:user, :organizer)
     conference = create(:conference)
     create(:conference_membership, user: user, conference: conference, role: :organizer)

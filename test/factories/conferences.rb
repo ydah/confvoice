@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :conference do
     sequence(:name) { |number| "ConfVoice Summit #{number}" }
-    description { "テスト用カンファレンス" }
+    description { "Test conference" }
     venue { "Hall A" }
     starts_on { Date.current }
     ends_on { Date.current + 1.day }

@@ -1,19 +1,19 @@
 require "test_helper"
 
 class ConferenceTest < ActiveSupport::TestCase
-  test "slugはカンファレンス名から自動生成されること" do
+  test "generates a slug from the conference name" do
     conference = create(:conference, name: "RubyKaigi 2026", slug: nil)
 
     assert_equal "rubykaigi2026", conference.slug
   end
 
-  test "日本語カンファレンス名は日本語slugとして自動生成されること" do
+  test "generates a Japanese slug from a Japanese conference name" do
     conference = create(:conference, name: "東京Ruby会議", slug: nil)
 
     assert_equal "東京ruby会議", conference.slug
   end
 
-  test "OGP画像を添付できること" do
+  test "accepts an OGP image attachment" do
     conference = build(:conference)
     conference.ogp_image.attach(
       io: StringIO.new("image"),
@@ -37,7 +37,7 @@ class ConferenceTest < ActiveSupport::TestCase
     assert_equal [ 2, 2 ], resized.download.byteslice(16, 8).unpack("N2")
   end
 
-  test "画像以外のOGP画像添付は無効" do
+  test "rejects non-image OGP attachments" do
     conference = build(:conference)
     conference.ogp_image.attach(
       io: StringIO.new("not an image"),
@@ -49,7 +49,7 @@ class ConferenceTest < ActiveSupport::TestCase
     assert_includes conference.errors[:ogp_image], "must be a PNG, JPEG, or WebP image"
   end
 
-  test "5MBを超えるOGP画像添付は無効" do
+  test "rejects OGP images larger than 5 MB" do
     conference = build(:conference)
     conference.ogp_image.attach(
       io: StringIO.new("x" * (Conference::OGP_IMAGE_MAX_SIZE + 1)),

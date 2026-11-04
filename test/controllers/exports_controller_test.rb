@@ -2,14 +2,14 @@ require "test_helper"
 require "csv"
 
 class ExportsControllerTest < ActionDispatch::IntegrationTest
-  test "主催者はCSVをダウンロードできること" do
+  test "organizers can download feedback as CSV" do
     user = create(:user, :organizer)
     conference = create(:conference)
     session = create(:session, conference: conference)
     create(:conference_membership, user: user, conference: conference)
-    create(:feedback, session: session, respondent_name: "参加者 太郎", rating: nil, body: "良かった")
-    other_session = create(:session, conference: conference, speaker_name: "別の登壇者")
-    create(:feedback, session: other_session, body: "別の登壇者への感想")
+    create(:feedback, session: session, respondent_name: "Taylor Smith", rating: nil, body: "Great talk")
+    other_session = create(:session, conference: conference, speaker_name: "Another Speaker")
+    create(:feedback, session: other_session, body: "Feedback for another speaker")
 
     sign_in_as(user)
     get conference_export_path(conference, format: :csv)
@@ -18,19 +18,19 @@ class ExportsControllerTest < ActionDispatch::IntegrationTest
     assert_equal "text/csv", response.media_type
     assert_includes response.body, "Session"
     assert_includes response.body, "Name"
-    assert_includes response.body, "参加者 太郎"
-    assert_includes response.body, "良かった"
-    assert_includes response.body, "別の登壇者への感想"
+    assert_includes response.body, "Taylor Smith"
+    assert_includes response.body, "Great talk"
+    assert_includes response.body, "Feedback for another speaker"
     assert_includes response.headers["Content-Disposition"], "#{conference.slug}_feedbacks_#{Date.current}.csv"
   end
 
-  test "登壇者を指定すると同じカンファレンスのその登壇者の全セッションをCSV出力すること" do
+  test "exports feedback for all sessions by the selected speaker within the conference" do
     user = create(:user, :organizer)
     conference = create(:conference)
-    speaker_name = "発表者 A"
+    speaker_name = "Zoë Morgan"
     sessions = create_list(:session, 2, conference: conference, speaker_name: speaker_name)
-    sessions.each { |session| create(:feedback, session: session, body: "@感想") }
-    create(:feedback, session: create(:session, conference: conference, speaker_name: "別の登壇者"))
+    sessions.each { |session| create(:feedback, session: session, body: "@feedback") }
+    create(:feedback, session: create(:session, conference: conference, speaker_name: "Another Speaker"))
     create(:feedback, session: create(:session, speaker_name: speaker_name))
     create(:conference_membership, user: user, conference: conference, role: :organizer)
 
@@ -43,14 +43,14 @@ class ExportsControllerTest < ActionDispatch::IntegrationTest
     rows = CSV.parse(response.body.delete_prefix("\uFEFF"), headers: true)
     assert_equal sessions.map(&:title).sort, rows.map { |row| row[0] }.sort
     assert_equal [ speaker_name ], rows.map { |row| row[1] }.uniq
-    assert_equal [ "'@感想" ], rows.map { |row| row[4] }.uniq
+    assert_equal [ "'@feedback" ], rows.map { |row| row[4] }.uniq
     assert_includes CGI.unescape(response.headers["Content-Disposition"]), "#{conference.slug}_#{speaker_name}_feedbacks_#{Date.current}.csv"
   end
 
-  test "別のカンファレンスにしかいない登壇者はCSV出力できないこと" do
+  test "rejects CSV exports for speakers who only appear in another conference" do
     user = create(:user, :organizer)
     conference = create(:conference)
-    other_session = create(:session, speaker_name: "別イベントの登壇者")
+    other_session = create(:session, speaker_name: "Speaker from another conference")
     create(:feedback, session: other_session)
     create(:conference_membership, user: user, conference: conference, role: :organizer)
 
@@ -60,11 +60,11 @@ class ExportsControllerTest < ActionDispatch::IntegrationTest
     assert_response :not_found
   end
 
-  test "感想のない登壇者はヘッダーのみのCSVを出力できること" do
+  test "exports only the CSV header for a speaker without feedback" do
     user = create(:user, :organizer)
     conference = create(:conference)
     session = create(:session, conference: conference)
-    create(:feedback, session: create(:session, conference: conference, speaker_name: "別の登壇者"))
+    create(:feedback, session: create(:session, conference: conference, speaker_name: "Another Speaker"))
     create(:conference_membership, user: user, conference: conference, role: :organizer)
 
     sign_in_as(user)
@@ -74,7 +74,7 @@ class ExportsControllerTest < ActionDispatch::IntegrationTest
     assert_equal [ I18n.t("exports.headers").values ], CSV.parse(response.body.delete_prefix("\uFEFF"))
   end
 
-  test "登壇者名に配列を指定した場合はCSV出力を拒否すること" do
+  test "rejects CSV exports when the speaker name is an array" do
     user = create(:user, :organizer)
     session = create(:session)
     create(:conference_membership, user: user, conference: session.conference, role: :organizer)
@@ -85,7 +85,7 @@ class ExportsControllerTest < ActionDispatch::IntegrationTest
     assert_response :bad_request
   end
 
-  test "未ログインでは登壇者のCSVを出力できないこと" do
+  test "unauthenticated users cannot export speaker feedback as CSV" do
     session = create(:session)
 
     get conference_export_path(session.conference, format: :csv, speaker_name: session.speaker_name)
@@ -93,7 +93,7 @@ class ExportsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to new_session_path
   end
 
-  test "speakerメンバーは登壇者のCSVを出力できないこと" do
+  test "speaker members cannot export speaker feedback as CSV" do
     user = create(:user)
     session = create(:session)
     create(:conference_membership, user: user, conference: session.conference, role: :speaker)
@@ -104,7 +104,7 @@ class ExportsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to root_path
   end
 
-  test "別のカンファレンスの主催者は登壇者のCSVを出力できないこと" do
+  test "organizers of another conference cannot export speaker feedback as CSV" do
     user = create(:user, :organizer)
     session = create(:session)
     create(:conference_membership, user: user, role: :organizer)
@@ -115,7 +115,7 @@ class ExportsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to root_path
   end
 
-  test "CSV出力では式として解釈される値をエスケープすること" do
+  test "escapes CSV values that could be interpreted as formulas" do
     user = create(:user, :organizer)
     conference = create(:conference)
     session = create(:session, conference: conference)
