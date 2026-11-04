@@ -10,6 +10,13 @@ class ExportsController < ApplicationController
       .includes(:session)
       .order(created_at: :desc)
 
+    if params[:speaker_name].present?
+      speaker_name = params.expect(:speaker_name)
+      @conference.sessions.find_by!(speaker_name: speaker_name)
+      # shortcut: Names group speakers; use stable speaker IDs if names need disambiguation.
+      feedbacks = feedbacks.where(sessions: { speaker_name: speaker_name })
+    end
+
     csv_data = CSV.generate do |csv|
       csv << I18n.t("exports.headers").values
       feedbacks.each do |feedback|
@@ -24,8 +31,9 @@ class ExportsController < ApplicationController
       end
     end
 
+    filename = [ @conference.slug, speaker_name, "feedbacks", Date.current ].compact.join("_") + ".csv"
     send_data "\uFEFF#{csv_data}",
-      filename: "#{@conference.slug}_feedbacks_#{Date.current}.csv",
+      filename: ActiveStorage::Filename.new(filename).sanitized,
       type: "text/csv; charset=utf-8"
   end
 

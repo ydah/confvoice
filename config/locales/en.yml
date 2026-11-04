@@ -106,6 +106,8 @@ en:
       title: "%{session} feedback"
       moderation_help: "Speakers only see feedback marked as shared. New submissions are visible to organizers first."
       export_csv: "Export CSV"
+      export_speaker_csv: "Export speaker CSV"
+      select_speaker: "Select a speaker"
       empty: "No feedback yet."
       unnamed: "Anonymous"
       rating_label: "Rating %{rating}"

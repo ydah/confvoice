@@ -15,6 +15,7 @@ class FeedbacksControllerTest < ActionDispatch::IntegrationTest
     assert_select "span", "Organizers only"
     assert_select "form[action=?]", conference_session_feedback_speaker_visibility_path(conference, session, feedback)
     assert_select "button", "Share with speaker"
+    assert_select "a[href=?][data-turbo=false]", conference_export_path(conference, format: :csv, speaker_name: session.speaker_name), text: "Export speaker CSV"
   end
 
   test "speakerメンバーは未共有を含む感想一覧を閲覧できないこと" do
